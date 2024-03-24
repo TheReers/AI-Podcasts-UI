@@ -4,6 +4,7 @@ import "../globals.css";
 
 export default function Dashboard() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (event: any) => {
@@ -11,6 +12,14 @@ export default function Dashboard() {
     setIsLoading(true);
     const message = event.target.message.value;
     const response = await fetch(`/api/create_podcast`, { method: "POST", body: JSON.stringify({ message }) });
+    const status = response.status;
+    if (status !== 200) {
+      const error = await response.json();
+      setError(error.message);
+      setIsLoading(false);
+      return;
+    }
+
     const audioBlob = await response.blob();
     const audioUrl = URL.createObjectURL(audioBlob);
   
@@ -22,12 +31,12 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="min-h-screen p-24">
       Dashboard
       {isLoading && <div>Loading...</div>}
       {!isLoading && !audioRef.current && (<>
         <div>Enter a message to generate a podcast</div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="">
           <label>
             Message:
             <input type="text" name="message" />
@@ -39,6 +48,7 @@ export default function Dashboard() {
       {audioRef.current && (
         <audio ref={audioRef} controls className="w-full mt-4" />
       )}
+      {error && <div className="text-red-500">{error}</div>}
     </main>
   );
 }
