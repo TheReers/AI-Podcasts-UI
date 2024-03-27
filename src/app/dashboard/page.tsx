@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import "../globals.css";
 
 export default function Dashboard() {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [audio, setAudio] = useState<AudioBuffer | null>(null);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -21,20 +21,28 @@ export default function Dashboard() {
     }
 
     const audioBlob = await response.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
-  
-    if (audioRef.current) {
-      audioRef.current.src = audioUrl;
-    }
+    const ctx = new AudioContext();
+    const audioBuffer = await ctx.decodeAudioData(await audioBlob.arrayBuffer());
+    const audioBufferSource = ctx.createBufferSource();
+    audioBufferSource.buffer = audioBuffer;
+    setAudio(audioBuffer);
 
     setIsLoading(false);
+  }
+
+  const playAudio = () => {
+    const ctx = new AudioContext();
+    const audioBuffer = ctx.createBufferSource();
+    audioBuffer.buffer = audio;
+    audioBuffer.connect(ctx.destination);
+    audioBuffer.start();
   }
 
   return (
     <main className="min-h-screen p-24">
       Dashboard
       {isLoading && <div>Loading...</div>}
-      {!isLoading && !audioRef.current && (<>
+      {!isLoading && !audio && (<>
         <div>Enter a message to generate a podcast</div>
         <form onSubmit={handleSubmit} className="">
           <label>
@@ -45,9 +53,13 @@ export default function Dashboard() {
         </form>
       </>)}
 
-      {audioRef.current && (
-        <audio ref={audioRef} controls className="w-full mt-4" />
-      )}
+      {
+        !isLoading && audio && (
+          <audio controls>
+            <source onPlay={playAudio} type="audio/mpeg" />
+          </audio>
+        )
+      }
       {error && <div className="text-red-500">{error}</div>}
     </main>
   );

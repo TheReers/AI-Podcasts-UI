@@ -20,16 +20,20 @@ export async function POST(req: Request, res: NextApiResponse<ResponseData>) {
       return Response.json(messageResponse, { status: 400 })
     }
 
-    const textToAudio = new TextToAudio()
-    const audioBuffer = await textToAudio.convertToAudio(messageResponse.data, 'Brian')
+    const audioResponse = await ai.convertToAudio(messageResponse.data)
   
-    if (audioBuffer instanceof Blob)  {
-      return new Response((audioBuffer as Blob), {
-        headers: { 'Content-Type': 'audio/mpeg' }
+    if (audioResponse.data instanceof Blob)  {
+      const buffer = Buffer.from(await audioResponse.data.arrayBuffer())
+      return new Response((buffer), {
+        headers: {
+          'Content-Type': 'audio/mpeg',
+          'Content-Disposition': 'attachment; filename=podcast.mp3',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
       })
     }
 
-    return Response.json(audioBuffer, { status: 500 })
+    return Response.json(audioResponse, { status: 500 })
   } catch (error) {
     return Response.json({ error: (error as Error).message }, { status: (error as any).statusCode || 500 })
   }
