@@ -1,6 +1,4 @@
 import type { NextApiResponse } from 'next'
-import TextToAudio from '../utils/text_to_audio'
-import AI from '../utils/ai_generation'
  
 type ResponseData = {
   data?: string
@@ -8,7 +6,6 @@ type ResponseData = {
 }
 
 export async function POST(req: Request, res: NextApiResponse<ResponseData>) {
-  try {
     const { message } = await req.json()
     if (!message) {
       return Response.json({ error: 'message is required' }, { status: 400 })

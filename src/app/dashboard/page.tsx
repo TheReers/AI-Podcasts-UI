@@ -1,9 +1,9 @@
 "use client"
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "../globals.css";
 
 export default function Dashboard() {
-  const [audio, setAudio] = useState<AudioBuffer | null>(null);
+  const [data, setData] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -11,38 +11,24 @@ export default function Dashboard() {
     event.preventDefault();
     setIsLoading(true);
     const message = event.target.message.value;
-    const response = await fetch(`/api/create_podcast`, { method: "POST", body: JSON.stringify({ message }) });
-    const status = response.status;
+    const api = await fetch(`/api/create_podcast`, { method: "POST", body: JSON.stringify({ message }) });
+    const status = api.status;
+    const response = await api.json();
     if (status !== 200) {
-      const error = await response.json();
-      setError(error.message);
+      setError(response.error?.message || 'An error occurred');
       setIsLoading(false);
       return;
     }
 
-    const audioBlob = await response.blob();
-    const ctx = new AudioContext();
-    const audioBuffer = await ctx.decodeAudioData(await audioBlob.arrayBuffer());
-    const audioBufferSource = ctx.createBufferSource();
-    audioBufferSource.buffer = audioBuffer;
-    setAudio(audioBuffer);
-
+    setData(response.data);
     setIsLoading(false);
-  }
-
-  const playAudio = () => {
-    const ctx = new AudioContext();
-    const audioBuffer = ctx.createBufferSource();
-    audioBuffer.buffer = audio;
-    audioBuffer.connect(ctx.destination);
-    audioBuffer.start();
   }
 
   return (
     <main className="min-h-screen p-24">
       Dashboard
       {isLoading && <div>Loading...</div>}
-      {!isLoading && !audio && (<>
+      {!isLoading && !data && (<>
         <div>Enter a message to generate a podcast</div>
         <form onSubmit={handleSubmit} className="">
           <label>
@@ -54,10 +40,10 @@ export default function Dashboard() {
       </>)}
 
       {
-        !isLoading && audio && (
-          <audio controls>
-            <source onPlay={playAudio} type="audio/mpeg" />
-          </audio>
+        !isLoading && data && (
+          <div>
+            {data}
+          </div>
         )
       }
       {error && <div className="text-red-500">{error}</div>}
