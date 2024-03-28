@@ -27,8 +27,7 @@ export async function POST(req: Request, res: NextApiResponse<ResponseData>) {
       return new Response((buffer), {
         headers: {
           'Content-Type': 'audio/mpeg',
-          'Content-Disposition': 'attachment; filename=podcast.mp3',
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
+          'Content-Disposition': 'attachment; filename=podcast.mp3'
         }
       })
     }
