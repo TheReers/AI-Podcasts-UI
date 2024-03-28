@@ -3,7 +3,7 @@ import { useState } from "react";
 import "../globals.css";
 
 export default function Dashboard() {
-  const [data, setData] = useState<string>("");
+  const [audioSrc, setAudioSrc] = useState("")
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -11,16 +11,18 @@ export default function Dashboard() {
     event.preventDefault();
     setIsLoading(true);
     const message = event.target.message.value;
-    const api = await fetch(`/api/create_podcast`, { method: "POST", body: JSON.stringify({ message }) });
-    const status = api.status;
-    const response = await api.json();
+    const response = await fetch(`/api/create_podcast`, { method: "POST", body: JSON.stringify({ message }) });
+    const status = response.status;
     if (status !== 200) {
-      setError(response.error?.message || 'An error occurred');
+      const error = await response.json();
+      setError(error.message);
       setIsLoading(false);
       return;
     }
 
-    setData(response.data);
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    setAudioSrc(audioUrl);
     setIsLoading(false);
   }
 
@@ -28,7 +30,7 @@ export default function Dashboard() {
     <main className="min-h-screen p-24">
       Dashboard
       {isLoading && <div>Loading...</div>}
-      {!isLoading && !data && (<>
+      {!isLoading && !audioSrc && (<>
         <div>Enter a message to generate a podcast</div>
         <form onSubmit={handleSubmit} className="">
           <label>
@@ -40,10 +42,11 @@ export default function Dashboard() {
       </>)}
 
       {
-        !isLoading && data && (
-          <div>
-            {data}
-          </div>
+        !isLoading && audioSrc && (
+          <audio controls>
+            <source src={audioSrc} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
         )
       }
       {error && <div className="text-red-500">{error}</div>}
