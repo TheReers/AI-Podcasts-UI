@@ -11,7 +11,7 @@ export default function Dashboard() {
     event.preventDefault();
     setIsLoading(true);
     const message = event.target.message.value;
-    const api = await fetch(`/api/create_podcast`, { method: "POST", body: JSON.stringify({ message }) });
+    const api = await fetch(`/api/send_message`, { method: "POST", body: JSON.stringify({ message }) });
     const status = api.status;
     const response = await api.json();
     if (status !== 200) {
