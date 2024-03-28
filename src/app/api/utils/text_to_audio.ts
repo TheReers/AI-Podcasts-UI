@@ -68,10 +68,7 @@ export default class TextToAudio {
                 body: JSON.stringify({
                     model_id: 'eleven_monolingual_v1',
                     text: text.length > 2500 ? text.substring(0, 2500) : text,
-                    voice_settings: {
-                        similarity_boost: 0.5,
-                        stability: 0.5
-                    }
+                    voice_settings: { similarity_boost: 0.5, stability: 0.5 }
                 }),
                 headers: this.headers
             }
@@ -94,6 +91,6 @@ export default class TextToAudio {
         }
 
         const response = await api.blob()
-        return response
+        return { data: response }
     }
 }

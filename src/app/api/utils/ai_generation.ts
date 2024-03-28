@@ -1,8 +1,7 @@
-import fs from 'fs';
-
 export default class AI {
     private baseUrl = 'https://api.openai.com/v1'
     private model = 'gpt-4-turbo-preview'
+    private podcastTitle = 'Reers Podcast show'
     private apiKey = process.env.NEXT_OPEN_AI_API_KEY || ''
     private headers: { [key: string]: string }
 
@@ -66,8 +65,6 @@ export default class AI {
             return validation
         }
 
-        const hostNames = ['John', 'Phil', 'Jack', 'Mary', 'Jimmie', 'Jane']
-
         const messages = [
             {
                 role:  "system",
@@ -76,7 +73,7 @@ export default class AI {
                 no extra formats like bold just characters that is a pure string.
 
                 The podcast is anchored by any one or two of ${this.getHostNames()}
-                The name of the podcast is Reers Podcast show.
+                The name of the podcast is ${this.podcastTitle}.
 
                 If the podcast title is gender based, use the best name for the anchor.
                 Also, for the podcast title, it can change to a better name that fits the title if the title seems
