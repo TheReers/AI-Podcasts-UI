@@ -1,3 +1,5 @@
+import envs from "../envs"
+
 interface Voice {
     id: string
     name: string
@@ -8,7 +10,7 @@ export default class TextToAudio {
     voices: Voice[] = []
     private base_url: string = 'https://api.elevenlabs.io/v1'
     private headers: { [key: string]: string }
-    private apiKey: string = process.env.NEXT_ELEVEN_LABS_API_KEY || ''
+    private apiKey: string = envs.elevenLabs.apiKey
 
     constructor() {
         this.headers = {

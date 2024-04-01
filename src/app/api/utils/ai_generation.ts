@@ -1,8 +1,10 @@
+import envs from "../envs"
+
 export default class AI {
     private baseUrl = 'https://api.openai.com/v1'
     private model = 'gpt-4-turbo-preview'
     private podcastTitle = 'Reers Podcast show'
-    private apiKey = process.env.NEXT_OPEN_AI_API_KEY || ''
+    private apiKey = envs.openAI.apiKey
     private headers: { [key: string]: string }
 
     constructor () {
