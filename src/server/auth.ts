@@ -1,49 +1,45 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import { Awaitable, User } from "next-auth";
-import type { NextAuthOptions } from "next-auth";
-import axios from "axios";
-import { JWT } from "next-auth/jwt";
+import { Awaitable, User, NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { JWT } from 'next-auth/jwt';
+import axios from 'axios';
+import { HOUR_MS } from '../constants';
+import envs from '@/envs';
 
 export const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
-
   providers: [
-    // ...add more providers here
     CredentialsProvider({
-      name: "credentials",
+      name: 'credentials',
       credentials: {
-        email: { label: "email", type: "text" },
-        password: { label: "password", type: "password" },
+        email: { label: 'email', type: 'text' },
+        password: { label: 'password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log("credentials", credentials, process.env.REACT_APP_BASE_URL);
-        return (
-          axios
-            .post(`${process.env.REACT_APP_BASE_URL}/`, {
+        console.log('credentials', credentials, envs.baseUrl);
+        try {
+          const response = await axios.post(
+            `${envs.baseUrl}/`,
+            {
               email: credentials!.email,
               password: credentials!.password,
-            })
-            .then((response) => {
-              console.log("response", response);
-              return {
-                token:'token here',
-                data: 'user data here',
-              } as unknown as Awaitable<User | null>;
-            })
-            .catch((error) => {
-              console.log("error", error);
-              throw new Error(JSON.stringify(error.response.data));
-            }) || null
-        );
+            }
+          );
+          console.log('response', response);
+          return {
+            token:'token here',
+            data: 'user data here',
+          } as unknown as Awaitable<User | null>;
+        } catch (error) {
+          console.log('error', error);
+          throw new Error(JSON.stringify((error as any).response.data));
+        }
       },
     })
   ],
   callbacks: {
     async session({ session, token }) {
-      // Send properties to the client, like an access_token from a provider.
       session.user = token.user as any;
-      //console.log(session.user)
-      (session as any).token = token.accessToken as any;
+      console.log(session.user)
+      ;(session as any).token = token.accessToken as any;
       return session;
     },
     async jwt({ token, user }: { token: JWT; user: any }) {
@@ -57,23 +53,21 @@ export const authOptions: NextAuthOptions = {
       return Promise.resolve(url);
     },
     async signIn({ account, profile, user }) {
-    
-
+      console.log('signIn', account, profile, user);
       return true; // Do different verification for other providers that don't have `email_verified`
     },
   },
 
   pages: {
-    signIn: "/login",
+    signIn: '/login',
+    newUser: '/register',
   },
-  secret: process.env.NEXTAUTH_SECRET ?? "supersecret",
+  secret: envs.nextAuthSecret,
   session: {
-    strategy: "jwt",
-    maxAge: 5 * 60 * 60, // 5 hour
+    strategy: 'jwt',
+    maxAge: 5 * HOUR_MS
   },
   jwt: {
-    // The maximum age of the NextAuth.js issued JWT in seconds.
-    // Defaults to `session.maxAge`.
-    maxAge: 60 * 60 * 5, // 5 hours
+    maxAge: 5 * HOUR_MS
   },
 };
