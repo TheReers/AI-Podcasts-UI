@@ -1,0 +1,9 @@
+POST http://localhost:3000/api/send_message HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZ21haWwuY29tIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTcxMjE0OTI0MywiZXhwIjoxNzEyMjM1NjQzfQ.q4bXdJX755rFum7H2nAzfd3HErwtsBI3jwipEFu1bsU
+
+{
+    "email": "user@gmail.com",
+    "password": "pass@Wo1r2",
+    "message": "Hello World"
+}
