@@ -1,16 +1,12 @@
 import type { NextApiResponse } from 'next'
-import { validateSignup } from '../utils/validator'
+import { RegisterDto, validateSignup } from '../utils/validator'
 import { hashPwd } from '../utils/hashing'
+import { createNewUser } from '../db/models/user.model'
+import { requiresDB } from '../middlewares/requires_db.middlewre'
 
-interface Register {
-    email: string
-    password: string
-    confirm_password: string
-}
-
-export async function POST(req: Request, res: NextApiResponse) {
-    const body: Register = await req.json()
-    const validationResult = validateSignup(body.email, body.password, body.confirm_password)
+const register = async (req: Request, res: NextApiResponse) => {
+    const body: RegisterDto = await req.json()
+    const validationResult = validateSignup(body)
     if (!validationResult.valid || !validationResult.data) {
         return Response.json(
             {
@@ -22,8 +18,19 @@ export async function POST(req: Request, res: NextApiResponse) {
     }
 
     const { data } = validationResult
-    const comparePassword = await hashPwd(data.password)
-    data.password = comparePassword
+    const hashPassword = await hashPwd(data.password)
 
-    return Response.json({ message: 'Signup successful', data })
+    const createUser = await createNewUser({
+        email: data.email,
+        password: hashPassword,
+        name: data.name,
+    })
+
+    if (createUser.error || !createUser.data) {
+        return Response.json({ message: 'Something went wrong' }, { status: 500 })
+    }
+
+    return Response.json({ message: 'Signup successful', data: createUser.data.toJSON() })
 }
+
+export const POST = requiresDB(register)

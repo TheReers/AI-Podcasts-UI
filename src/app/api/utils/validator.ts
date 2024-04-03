@@ -1,4 +1,5 @@
 import validator from 'validator';
+import { capitalizeWord } from './capitalize_word.utils';
 
 const invalidPwdMsg = 'Invalid password';
 const pwdLengthMsg = 'Password must be at least 8 characters long and'
@@ -14,7 +15,19 @@ const isValidPassword = (password: string) => !!password && validator.isStrongPa
     minUppercase: 1
 });
 
-export const validateLogin = (email: string, password: string) => {
+export interface RegisterDto {
+    name: string
+    email: string
+    password: string
+    confirm_password: string
+}
+
+export interface LoginDto {
+    email: string
+    password: string
+}
+
+export const validateLogin = ({ email, password }: LoginDto) => {
     const errors: { [key: string]: string } = {};
     if (!isValidEmail(email)) errors.email = 'Invalid email';
     if (!isValidPassword(password)) errors.password = INVALID_PASSWORD;
@@ -24,17 +37,27 @@ export const validateLogin = (email: string, password: string) => {
     return { valid: true, data: { email: email.toLowerCase(), password } }
 }
 
-export const validateSignup = (email: string, password: string, confirmPassword: string) => {
+export const validateSignup = ({ email, password, confirm_password, name }: RegisterDto) => {
     const errors: { [key: string]: string } = {};
     if (!isValidEmail(email)) errors.email = 'Invalid email';
     if (!isValidPassword(password)) errors.password = INVALID_PASSWORD;
-    if (password !== confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    if (!name || name.split(' ').length < 2) errors.name = 'Invalid full name';
+    if (password !== confirm_password) errors.confirm_password = 'Passwords do not match';
 
     if (Object.keys(errors).length) return { errors, valid: false };
 
-    return { valid: true, data: { email: email.toLowerCase(), password } }
+    return {
+        valid: true,
+        data: {
+            email: email.toLowerCase(),
+            password,
+            name: name.split(' ').map(word => capitalizeWord(word)).join(' ')
+        }
+    }
 }
 
 export const isValidJwtHeader = (header?: string | null) => {
+    console.log('header', header)
+    
     return !!header && header.startsWith('Bearer ') && validator.isJWT(header.split(' ')[1]);
 }

@@ -1,16 +1,13 @@
 import type { NextApiResponse } from 'next'
-import { validateLogin } from '../utils/validator'
+import { LoginDto, validateLogin } from '../utils/validator'
 import { comparePwd } from '../utils/hashing'
 import { createAuthTokens } from '../utils/token'
+import userModel from '../db/models/user.model'
+import { requiresDB } from '../middlewares/requires_db.middlewre'
 
-interface LoginDto {
-    email: string
-    password: string
-}
-
-export async function POST(req: Request, res: NextApiResponse) {
+export const login = async (req: Request, res: NextApiResponse) => {
     const body: LoginDto = await req.json()
-    const validationResult = validateLogin(body.email, body.password)
+    const validationResult = validateLogin(body)
     if (!validationResult.valid || !validationResult.data) {
         return Response.json(
             {
@@ -22,17 +19,22 @@ export async function POST(req: Request, res: NextApiResponse) {
     }
 
     const { data } = validationResult
-    const comparePassword = await comparePwd(data.password, 'hashed_password')
+    const userExist = await userModel.findOne({ email: data.email })
+    if (!userExist) {
+        return Response.json({ message: 'Invalid email or password' }, { status: 400 })
+    }
+
+    const comparePassword = await comparePwd(data.password, userExist.password)
     if (!comparePassword) {
         return Response.json({ message: 'Invalid email or password' }, { status: 400 })
     }
 
-    delete (data as any).password
-
-    const tokens = createAuthTokens({ email: data.email })
+    const tokens = await createAuthTokens(userExist)
 
     return Response.json({
         message: 'Login successful',
-        data: { user: data, tokens }
+        data: { user: userExist.toJSON(), tokens }
     })
 }
+
+export const POST = requiresDB(login)

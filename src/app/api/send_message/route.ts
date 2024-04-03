@@ -1,4 +1,4 @@
-import { Handler, requiresLogin } from '../middlewares/requires_login'
+import { Handler, requiresLogin } from '../middlewares/requires_login.middleware'
 
 const sendMessage: Handler = async (req) => {
     const { user } = req
