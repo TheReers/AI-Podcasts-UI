@@ -12,7 +12,6 @@ export const requiresLogin = (handler: Handler) => {
     return async (req: BaseRequest, res: NextApiResponse) => {
         const dbConnection = await connectToDB()
         if (dbConnection.error) {
-            console.log(dbConnection.error)
             return Response.json({ message: 'Something went wrong' }, { status: 500 })
         }
 

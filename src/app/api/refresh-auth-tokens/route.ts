@@ -7,7 +7,6 @@ import { requiresDB } from '../middlewares/requires_db.middlewre'
 export const refreshAuthToken = async (req: Request, res: NextApiResponse) => {
     const body: { token: string } = await req.json()
     const isValid = isValidJwtHeader(`Bearer ${body.token}`)
-    console.log('isValid', isValid)
     if (!isValid) {
         return Response.json(
             {

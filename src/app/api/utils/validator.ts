@@ -57,7 +57,5 @@ export const validateSignup = ({ email, password, confirm_password, name }: Regi
 }
 
 export const isValidJwtHeader = (header?: string | null) => {
-    console.log('header', header)
-    
     return !!header && header.startsWith('Bearer ') && validator.isJWT(header.split(' ')[1]);
 }
