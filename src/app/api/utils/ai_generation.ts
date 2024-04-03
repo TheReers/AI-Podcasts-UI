@@ -1,8 +1,10 @@
+import envs from "../envs"
+
 export default class AI {
     private baseUrl = 'https://api.openai.com/v1'
     private model = 'gpt-4-turbo-preview'
     private podcastTitle = 'Reers Podcast show'
-    private apiKey = process.env.NEXT_OPEN_AI_API_KEY || ''
+    private apiKey = envs.openAI.apiKey
     private headers: { [key: string]: string }
 
     constructor () {
@@ -55,11 +57,12 @@ export default class AI {
     }
 
     private getHostNames() {
-        const hostNames = ['John', 'Phil', 'Jack', 'Mary', 'Jimmie', 'Jane']
+        const hostNames = ['Ezra', 'Emery', 'Kai', 'Nova', 'August', 'Jett']
         return hostNames.join(', ')
     }
 
     async generatePodcastText(message: string) {
+        const start = Date.now()
         const validation = this.validateApiKeyAndMessage(message)
         if (validation.error) {
             return validation
@@ -71,6 +74,7 @@ export default class AI {
                 content:  `You are a podcast generator.
                 Your job is to generate a podcast for the following prompt,
                 no extra formats like bold just characters that is a pure string.
+                The podcast should talk in-depth about the topic and should be at least 500 words long.
 
                 The podcast is anchored by any one or two of ${this.getHostNames()}
                 The name of the podcast is ${this.podcastTitle}.
@@ -116,12 +120,15 @@ export default class AI {
             }
         }
 
+        const end = Date.now()
+        console.log(`Time taken to generate podcast text: ${(end - start)}ms`)
         return {
             data: response.choices?.[0].message.content
         }
     }
 
     async convertToAudio(text: string) {
+        const start = Date.now()
         const validation = this.validateApiKeyAndMessage(text)
         if (validation.error) {
             return validation
@@ -158,6 +165,8 @@ export default class AI {
         }
 
         const response = await api.blob()
+        const end = Date.now()
+        console.log(`Time taken to convert podcast text to audio: ${(end - start)}ms`)
         return { data: response }
     }
 }
