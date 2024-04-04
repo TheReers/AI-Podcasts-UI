@@ -4,7 +4,7 @@ import { TokenType, createAuthTokens, verifyToken } from '../utils/token'
 import userModel from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
 
-export const refreshAuthToken = async (req: Request, res: NextApiResponse) => {
+const refreshAuthToken = async (req: Request, res: NextApiResponse) => {
     const body: { token: string } = await req.json()
     const isValid = isValidJwtHeader(`Bearer ${body.token}`)
     if (!isValid) {

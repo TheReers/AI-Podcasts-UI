@@ -1,12 +1,9 @@
 import { NextApiResponse } from "next"
 import { verifyToken } from "../utils/token"
 import { isValidJwtHeader } from "../utils/validator"
-import userModel, { IUser } from "../db/models/user.model"
+import userModel from "../db/models/user.model"
 import { connectToDB } from "../db/connect"
-
-type BaseRequest = Request & { user?: IUser }
-
-export type Handler = (req: BaseRequest, res: NextApiResponse) => Promise<Response>
+import { BaseRequest, Handler } from "./types"
 
 export const requiresLogin = (handler: Handler) => {
     return async (req: BaseRequest, res: NextApiResponse) => {

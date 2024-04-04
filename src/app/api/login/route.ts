@@ -1,11 +1,11 @@
-import type { NextApiResponse } from 'next'
 import { LoginDto, validateLogin } from '../utils/validator'
 import { comparePwd } from '../utils/hashing'
 import { createAuthTokens } from '../utils/token'
 import userModel from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
+import { Handler } from '../middlewares/types'
 
-export const login = async (req: Request, res: NextApiResponse) => {
+const login: Handler = async (req) => {
     const body: LoginDto = await req.json()
     const validationResult = validateLogin(body)
     if (!validationResult.valid || !validationResult.data) {
