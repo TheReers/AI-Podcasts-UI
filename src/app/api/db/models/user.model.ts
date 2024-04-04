@@ -54,9 +54,15 @@ export const createNewUser = async (data: Partial<IUser>) => {
     try {
         const user = await userModel.create(data)
         return { data: user }
-    } catch (error) {
+    } catch (err) {
+        const error = err as unknown as Error & { code: number } 
         console.log('error creating user', error)
-        return { error }
+
+        if (error.code === 11000) {
+            return { error: 'Account already exist', status: 400 }
+        }
+
+        return { error: 'Something went wrong', status: 500 }
     }
 }
 export default userModel
