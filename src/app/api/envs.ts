@@ -12,7 +12,7 @@ const envs = {
         apiKey: process.env.NEXT_ELEVEN_LABS_API_KEY || ''
     },
     secretKey: process.env.NEXT_SECRET_KEY || '',
-    dbUri: process.env.NEXT_DB_URI || 'mongodb://localhost:27017/reerstech'
+    dbUri: process.env.NEXT_DB_URI || ''
 }
 
 export default envs

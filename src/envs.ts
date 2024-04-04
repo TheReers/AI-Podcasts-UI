@@ -4,7 +4,7 @@
  * As a result, calling process.env.* outside of this file is discouraged.
  */
 const envs = {
-    nextAuthSecret: process.env.NEXTAUTH_SECRET || 'supersecret',
+    nextAuthSecret: process.env.NEXTAUTH_SECRET || '',
     baseUrl: process.env.REACT_APP_BASE_URL || 'http://localhost:3000',
 }
 
