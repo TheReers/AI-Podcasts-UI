@@ -1,12 +1,8 @@
-import type { NextApiResponse } from 'next'
 import AI from '../utils/ai_generation'
- 
-type ResponseData = {
-  data?: string
-  error?: string
-}
+import { requiresLogin } from '../middlewares/requires_login.middleware'
+import { Handler } from '../middlewares/types'
 
-export async function POST(req: Request, res: NextApiResponse<ResponseData>) {
+const createPodcast: Handler = async (req) => {
   const { message } = await req.json()
   if (!message) {
     return Response.json({ error: 'message is required' }, { status: 400 })
@@ -32,3 +28,5 @@ export async function POST(req: Request, res: NextApiResponse<ResponseData>) {
 
   return Response.json(audioResponse, { status: 500 })
 }
+
+export const POST = requiresLogin(createPodcast)
