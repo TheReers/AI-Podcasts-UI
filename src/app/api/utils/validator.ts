@@ -4,7 +4,7 @@ import { capitalizeWord } from './capitalize_word.utils';
 const invalidPwdMsg = 'Invalid password';
 const pwdLengthMsg = 'Password must be at least 8 characters long and'
 const pwdCharsMsg = 'contain at least one uppercase letter one lowercase letter, one number, and one special character.'
-const INVALID_PASSWORD = `${invalidPwdMsg} ${pwdLengthMsg} ${pwdCharsMsg}`;
+const INVALID_PASSWORD = `${invalidPwdMsg}. ${pwdLengthMsg} ${pwdCharsMsg}`;
 
 const isValidEmail = (email: string) => !!email && validator.isEmail(email);
 const isValidPassword = (password: string) => !!password && validator.isStrongPassword(password, {

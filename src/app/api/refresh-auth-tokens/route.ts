@@ -32,7 +32,7 @@ const refreshAuthToken = async (req: Request, res: NextApiResponse) => {
 
     const tokens = await createAuthTokens(userExist)
     return Response.json({
-        message: 'refresh auth token successful',
+        message: 'Refresh auth token successful',
         data: { tokens }
     })
 }
