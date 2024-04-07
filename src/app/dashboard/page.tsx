@@ -1,6 +1,8 @@
 "use client"
 import { useState } from "react";
 import "../globals.css";
+import { useSession } from "next-auth/react";
+import { signOutUser } from "../utils/signOut";
 
 export default function Dashboard() {
   const [audioSrc, setAudioSrc] = useState("")
@@ -26,6 +28,12 @@ export default function Dashboard() {
     setIsLoading(false);
   }
 
+  const { data: session } = useSession({required: true});
+
+  console.log(session);
+  const token = (session as any)?.token;
+  console.log(token);
+
   return (
     <main className="min-h-screen p-24">
       Dashboard
@@ -39,6 +47,7 @@ export default function Dashboard() {
           </label>
           <button type="submit">Submit</button>
         </form>
+        <button onClick={() => signOutUser(token) }>Log out</button> 
       </>)}
 
       {
@@ -53,3 +62,5 @@ export default function Dashboard() {
     </main>
   );
 }
+
+(Dashboard as any).auth = true;

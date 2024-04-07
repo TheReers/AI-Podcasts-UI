@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
 import { HOUR_MS } from '../constants';
-import envs from '@/envs';
+import envs from '../envs';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,22 +14,23 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('credentials', credentials, envs.baseUrl);
+       
         try {
           const response = await axios.post(
-            `${envs.baseUrl}/`,
+            `${envs.baseUrl}/api/login`,
             {
               email: credentials!.email,
               password: credentials!.password,
             }
           );
-          console.log('response', response);
+          console.log(response.data)
+      
           return {
-            token:'token here',
-            data: 'user data here',
+            token:response.data.data.tokens.access.token,
+            data: response.data.data,
           } as unknown as Awaitable<User | null>;
         } catch (error) {
-          console.log('error', error);
+       
           throw new Error(JSON.stringify((error as any).response.data));
         }
       },
@@ -38,7 +39,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token }) {
       session.user = token.user as any;
-      console.log(session.user)
+
       ;(session as any).token = token.accessToken as any;
       return session;
     },
