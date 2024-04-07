@@ -30,7 +30,7 @@ const register = async (req: Request, res: NextApiResponse) => {
         return Response.json({ message: createUser.error || 'Something went wrong' }, { status: createUser.status || 500 })
     }
 
-    return Response.json({ message: 'Signup successful', data: createUser.data.toJSON() })
+    return Response.json({ message: 'Signup successful', data: createUser.data.toJSON() }, { status: 201 })
 }
 
 export const POST = requiresDB(register)
