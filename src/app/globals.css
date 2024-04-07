@@ -31,3 +31,25 @@ body {
     text-wrap: balance;
   }
 }
+
+input {
+  display: block;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid white;
+  padding: 10px 12px;
+  margin-bottom: 5px;
+  font-size: 14px;
+  border: 1px solid #B7BBBC;
+  outline: none;
+  color: #000;
+}
+
+label {
+  margin-bottom: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #040404;
+}
