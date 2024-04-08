@@ -1,13 +1,9 @@
 import { signOut } from "next-auth/react";
 import { Api, handleApiError } from "../service/axios";
 
-
-
-
-export const signOutUser = async (token:string) => {
+export const signOutUser = async () => {
     try {
-        if(!token) throw new Error("No token provided");
-        await Api.post("/api/logout",{},{headers: {Authorization: `Bearer ${token}`}});
+        await Api.post("/api/logout");
         await signOut();
     } catch (error) {
         handleApiError(error);
