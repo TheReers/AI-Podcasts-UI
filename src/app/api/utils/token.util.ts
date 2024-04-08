@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import envs from '../envs';
 import { DAY_S, HOUR_S } from '../../../constants';
-import { addSecondsToDate } from './date';
+import { addSecondsToDate } from './date.util';
 import { IUser } from '../db/models/user.model';
 
 export enum TokenType {

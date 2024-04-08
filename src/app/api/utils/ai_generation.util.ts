@@ -1,4 +1,34 @@
 import envs from "../envs"
+import http from "./http.util"
+
+interface ChatCompletionResponse {
+    choices: {
+        message: {
+            index: number
+            content: string
+            finish_reason: string
+        }
+    }[]
+    id: string
+    object: string
+    created: number
+    model: string
+    usage: { prompt_tokens: number, completion_tokens: number, total_tokens: number },
+    system_fingerprint: string
+}
+
+interface ChatCompletionRequest {
+    model: string
+    messages: { role: string; content: string }[]
+    response_format: { type: 'text' | 'json_object' },
+    temperature: number
+}
+
+interface TextToAudioRequest {
+    model: 'tts-1',
+    input: string,
+    voice: 'alloy'
+}
 
 export default class AI {
     private baseUrl = 'https://api.openai.com/v1'
@@ -90,32 +120,20 @@ export default class AI {
             }
         ]
 
-        const api = await fetch(
+        const generatePodcastTextRequest = await http.post<ChatCompletionRequest, ChatCompletionResponse>(
             `${this.baseUrl}/chat/completions`,
             {
-                method: 'POST',
-                body: JSON.stringify({
-                    model: this.model,
-                    messages,
-                    response_format: { type: 'text' },
-                    temperature: 0.7
-                }),
-                headers: this.headers
-            }
+                model: this.model,
+                messages,
+                response_format: { type: 'text' },
+                temperature: 0.7
+            },
+            this.headers
         )
 
-        const statusCode = api.status
-        const response = await api.json()
-        if (statusCode !== 200) {
+        if (generatePodcastTextRequest.error || !generatePodcastTextRequest.data) {
             return {
-                error: response.error,
-                message: 'Could not generate podcast.'
-            }
-        }
-
-        if (response.error) {
-            return {
-                error: response.error,
+                error: generatePodcastTextRequest.error?.error?.message || 'Something went wrong',
                 message: 'Could not generate podcast.'
             }
         }
@@ -123,7 +141,7 @@ export default class AI {
         const end = Date.now()
         console.log(`Time taken to generate podcast text: ${(end - start)}ms`)
         return {
-            data: response.choices?.[0].message.content
+            data: generatePodcastTextRequest.data.choices?.[0].message.content
         }
     }
 
@@ -135,38 +153,27 @@ export default class AI {
         }
 
         const voice = 'alloy'
-        const api = await fetch(
+        const textToAudioRequest = await http.post<TextToAudioRequest, ArrayBuffer>(
             `${this.baseUrl}/audio/speech`,
             {
-                method: 'POST',
-                body: JSON.stringify({
-                    model: 'tts-1',
-                    input: text,
-                    voice: voice
-                }),
-                headers: this.headers
-            }
+                model: 'tts-1',
+                input: text,
+                voice: voice
+            },
+            this.headers,
+            'arraybuffer'
         )
 
-        const statusCode = api.status
-        const mimetype = api.headers.get('Content-Type')
-        if (statusCode !== 200) {
+        if (textToAudioRequest.error || !textToAudioRequest.data) {
             return {
+                error: textToAudioRequest.error?.error?.message || 'Something went wrong',
                 message: 'Error generating audio',
-                error: await api.json()
             }
         }
 
-        if (mimetype !== 'audio/mpeg') {
-            return {
-                error: 'Error generating audio',
-                message: 'Invalid audio format'
-            }
-        }
-
-        const response = await api.blob()
+        const bufferResponse = Buffer.from(textToAudioRequest.data)
         const end = Date.now()
         console.log(`Time taken to convert podcast text to audio: ${(end - start)}ms`)
-        return { data: response }
+        return { data: bufferResponse }
     }
 }

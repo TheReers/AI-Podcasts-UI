@@ -1,4 +1,11 @@
 import envs from "../envs"
+import http from "./http.util"
+
+interface TextToAudioRequest {
+    model_id: 'eleven_monolingual_v1',
+    text: string
+    voice_settings: { similarity_boost: number, stability: number }
+}
 
 interface Voice {
     id: string
@@ -14,7 +21,7 @@ export default class TextToAudio {
 
     constructor() {
         this.headers = {
-            "Accept": "application/json",
+            "Accept": "audio/mpeg",
             "xi-api-key": this.apiKey,
             "Content-Type": "application/json"
         }
@@ -22,17 +29,17 @@ export default class TextToAudio {
 
     async setVoices(): Promise<Voice[]> {
         if (this.voices.length) return this.voices
-        const api = await fetch(`${this.base_url}/voices`, {
-            headers: this.headers
-        })
+        const getVoiceRequest = await http.get<{}, { voices: Voice[] }>(`${this.base_url}/voices`, this.headers)
 
-        const response = await api.json()
+        if (getVoiceRequest.error || !getVoiceRequest.data) {
+            return []
+        }
 
-        this.voices = response.voices.map((voice: any) => ({
-                category: voice.category,
-                name: voice.name,
-                preview_url: voice.preview_url,
-                id: voice.voice_id
+        this.voices = getVoiceRequest.data.voices.map((voice: any) => ({
+            category: voice.category,
+            name: voice.name,
+            preview_url: voice.preview_url,
+            id: voice.voice_id
         }))
         return this.voices
     }
@@ -48,6 +55,7 @@ export default class TextToAudio {
     }
 
     async convertToAudio(text: string, voice_name: string) {
+        const start = Date.now()
         if (!this.apiKey) {
             return {
                 error: 'API key is required',
@@ -63,36 +71,27 @@ export default class TextToAudio {
         }
 
         const voice = await this.getVoiceByName(voice_name) || this.voices[0]
-        const api = await fetch(
+        const textToAudioRequest = await http.post<TextToAudioRequest, ArrayBuffer>(
             `${this.base_url}/text-to-speech/${voice.id}`,
             {
-                method: 'POST',
-                body: JSON.stringify({
-                    model_id: 'eleven_monolingual_v1',
-                    text: text.length > 2500 ? text.substring(0, 2500) : text,
-                    voice_settings: { similarity_boost: 0.5, stability: 0.5 }
-                }),
-                headers: this.headers
-            }
+                model_id: 'eleven_monolingual_v1',
+                text: text.length > 2500 ? text.substring(0, 2500) : text,
+                voice_settings: { similarity_boost: 0.5, stability: 0.5 }
+            },
+            this.headers,
+            'arraybuffer'
         )
 
-        const statusCode = api.status
-        const mimetype = api.headers.get('Content-Type')
-        if (statusCode !== 200) {
+        if (textToAudioRequest.error || !textToAudioRequest.data) {
             return {
+                error: textToAudioRequest.error?.detail?.message || 'Something went wrong',
                 message: 'Error generating audio',
-                error: await api.json()
             }
         }
 
-        if (mimetype !== 'audio/mpeg') {
-            return {
-                error: 'Error generating audio',
-                message: 'Invalid audio format'
-            }
-        }
-
-        const response = await api.blob()
-        return { data: response }
+        const bufferResponse = Buffer.from(textToAudioRequest.data)
+        const end = Date.now()
+        console.log(`Time taken to convert podcast text to audio: ${(end - start)}ms`)
+        return { data: bufferResponse }
     }
 }
