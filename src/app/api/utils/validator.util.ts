@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { capitalizeWord } from './capitalize_word.utils';
+import { capitalizeWord } from './capitalize_word.util';
 
 const invalidPwdMsg = 'Invalid password';
 const pwdLengthMsg = 'Password must be at least 8 characters long and'

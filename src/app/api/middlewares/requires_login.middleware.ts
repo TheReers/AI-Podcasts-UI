@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next"
-import { verifyToken } from "../utils/token"
-import { isValidJwtHeader } from "../utils/validator"
+import { verifyToken } from "../utils/token.util"
+import { isValidJwtHeader } from "../utils/validator.util"
 import userModel from "../db/models/user.model"
 import { connectToDB } from "../db/connect"
 import { BaseRequest, Handler } from "./types"

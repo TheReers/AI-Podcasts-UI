@@ -1,4 +1,5 @@
-import AI from '../utils/ai_generation'
+import AI from '../utils/ai_generation.util'
+import fs from 'fs'
 import { requiresLogin } from '../middlewares/requires_login.middleware'
 import { Handler } from '../middlewares/types'
 
@@ -10,23 +11,21 @@ const createPodcast: Handler = async (req) => {
 
   const ai = new AI()
   const messageResponse = await ai.generatePodcastText(message)
-  if (messageResponse.error) {
+  if (messageResponse.error || !messageResponse.data) {
     return Response.json(messageResponse, { status: 400 })
   }
 
   const audioResponse = await ai.convertToAudio(messageResponse.data)
-
-  if (audioResponse.data instanceof Blob)  {
-    const buffer = Buffer.from(await audioResponse.data.arrayBuffer())
-    return new Response(buffer, {
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Content-Disposition': 'attachment; filename=podcast.mp3'
-      }
-    })
+  if (audioResponse.error || !audioResponse.data) {
+    return Response.json(audioResponse, { status: 400 })
   }
 
-  return Response.json(audioResponse, { status: 500 })
+  return new Response(audioResponse.data, {
+    headers: {
+      'Content-Type': 'audio/mpeg',
+      'Content-Disposition': 'attachment; filename=podcast.mp3'
+    }
+  })
 }
 
 export const POST = requiresLogin(createPodcast)

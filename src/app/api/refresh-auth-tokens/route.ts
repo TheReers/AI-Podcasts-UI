@@ -1,6 +1,6 @@
 import type { NextApiResponse } from 'next'
-import { isValidJwtHeader } from '../utils/validator'
-import { TokenType, createAuthTokens, verifyToken } from '../utils/token'
+import { isValidJwtHeader } from '../utils/validator.util'
+import { TokenType, createAuthTokens, verifyToken } from '../utils/token.util'
 import userModel from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
 

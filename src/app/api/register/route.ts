@@ -1,6 +1,6 @@
 import type { NextApiResponse } from 'next'
-import { RegisterDto, validateSignup } from '../utils/validator'
-import { hashPwd } from '../utils/hashing'
+import { RegisterDto, validateSignup } from '../utils/validator.util'
+import { hashPwd } from '../utils/hashing.util'
 import { createNewUser } from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
 
