@@ -11,7 +11,7 @@ import {
     config: AxiosRequestConfig
   ): Promise<AxiosRequestConfig> => {
     const session = await getSession();
-    const token = (session?.user as any)?.token;
+    const token = (session as any)?.token;
     config.headers = {
       ...(config?.headers ?? {}),
       Authorization: `Bearer ${token}`,

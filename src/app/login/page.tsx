@@ -43,11 +43,7 @@ interface Props {
 }
 
 function Login() {
-
   const [isLoading, setIsLoading] = useState(false);
-
-
-
   const {
     handleSubmit,
     register,
@@ -110,12 +106,8 @@ function Login() {
   return (
     <div className="flex  justify-center px-0 items-center min-h-screen">
       <div className="my-8 h-full max-h-[800px]">
-        <div className="flex w-[400px] md:w-[1000px] shadow-md my-auto justify-center">
-          
-
+        <div className="flex w-[400px] md:w-[1000px] shadow-md my-auto justify-center">      
           {/* form slots */}
-
-         
 
           <div className="bg-white w-[400px]  md:w-1/2 p-4 rounded-[7.5px]">
           <p className="font-bold text-2xl text-center text-black">Welcome back</p>
@@ -167,14 +159,11 @@ function Login() {
                 valid={!isValid}
                 loading={isLoading}
                 handleClick={() =>{
-                  
       }}
               />
             </div>
           </form>
             </div>
-
-           
           </div>
         </div>
       </div>
