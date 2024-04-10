@@ -1,5 +1,5 @@
 import { Schema, model, models } from 'mongoose'
-import { BaseModelClient, IBaseModel } from './base.model'
+import { BaseModelClient, IBaseModel, getModel } from './base.model'
 
 export interface IUser extends IBaseModel {
     name: string
@@ -48,7 +48,7 @@ userSchema.methods.toJSON = function (): UserClient {
     }
 }
 
-const userModel = models.User<IUser> ||  model<IUser>('User', userSchema)
+const userModel = getModel('User', userSchema)
 
 export const createNewUser = async (data: Partial<IUser>) => {
     try {

@@ -45,3 +45,15 @@ export const uploadFileToCloudinary = async ({
         return { error: (error as Error).message }
     }
 }
+
+export const deleteFileFromCloudinary = async (publicId: string) => {
+    try {
+        const deleteResp = await cloudinary.uploader.destroy(publicId)
+        return {
+            data: deleteResp
+        }
+    } catch (error) {
+        console.log('error deleting file from cloudinary', error)
+        return { error: (error as Error).message }
+    }
+}

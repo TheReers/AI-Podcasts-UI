@@ -1,7 +1,7 @@
 import getMP3Duration from 'get-mp3-duration'
 import AI from '../utils/ai_generation.util'
 import { Handler } from '../middlewares/types'
-import { uploadFileToCloudinary } from '../utils/save_file.util'
+import { uploadFileToCloudinary } from '../utils/save_and_delete_file.util'
 import podcastModel, { IPodcast, createNewPodcast } from '../db/models/podcast.model'
 
 const duplicatePodcast = async (podcast: IPodcast, user: string) => {
@@ -33,7 +33,7 @@ export const createPodcast: Handler = async (req) => {
     if (podcastExist.user.toString() !== user._id.toString()) {
         const duplicatePodcastResult = await duplicatePodcast(podcastExist, user._id.toString())
 
-        if (duplicatePodcastResult.error) {
+        if (duplicatePodcastResult.error || !duplicatePodcastResult.data) {
             return Response.json(duplicatePodcastResult, { status: 400 })
         }
 
@@ -42,7 +42,6 @@ export const createPodcast: Handler = async (req) => {
             data: duplicatePodcastResult.data.toJSON()
         }, { status: 201 })
     }
-
 
     return Response.json({ message: 'Podcast already exist', data: podcastExist.toJSON() }, { status: 409 })
   }
@@ -77,10 +76,11 @@ export const createPodcast: Handler = async (req) => {
     slug,
     duration,
     url: uploadResult.data.secure_url,
+    uploader_public_id: uploadResult.data.public_id,
     user: user._id.toString()
   })
 
-    if (createPodcast.error) {
+    if (createPodcast.error || !createPodcast.data) {
         return Response.json(createPodcast, { status: 400 })
     }
 

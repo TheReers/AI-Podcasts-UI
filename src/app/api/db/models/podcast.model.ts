@@ -1,10 +1,11 @@
 import { Schema, model, models } from 'mongoose'
-import { BaseModelClient, IBaseModel } from './base.model'
+import { BaseModelClient, IBaseModel, getModel } from './base.model'
 
 export interface IPodcast extends IBaseModel {
     name: string
     url: string
     duration: number
+    uploader_public_id: string
     slug: string
     user: Schema.Types.ObjectId
 }
@@ -16,6 +17,7 @@ export interface PodcastClient extends BaseModelClient {
      */
     url: string
     slug: string
+    uploader_public_id?: string
     /**
      * Duration of the podcast in seconds
      */
@@ -27,6 +29,7 @@ const podcastSchema = new Schema<IPodcast>({
     name: { type: String, required: true },
     slug: { type: String, required: true },
     url: { type: String, required: true },
+    uploader_public_id: { type: String },
     duration: { type: Number, min: 0 },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     createdAt: { type: Date, default: Date.now },
@@ -48,7 +51,7 @@ podcastSchema.methods.toJSON = function (): PodcastClient {
     }
 }
 
-const podcastModel = models.Podcast<IPodcast> ||  model<IPodcast>('Podcast', podcastSchema)
+const podcastModel = getModel('Podcast', podcastSchema)
 
 export const createNewPodcast = async (data: Partial<PodcastClient>) => {
     try {
