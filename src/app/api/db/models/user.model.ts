@@ -20,7 +20,7 @@ export interface UserClient extends BaseModelClient {
     is_verified: boolean
 }
 
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
@@ -65,4 +65,5 @@ export const createNewUser = async (data: Partial<IUser>) => {
         return { error: 'Something went wrong', status: 500 }
     }
 }
+
 export default userModel
