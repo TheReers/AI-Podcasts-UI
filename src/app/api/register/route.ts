@@ -1,10 +1,10 @@
-import type { NextApiResponse } from 'next'
 import { RegisterDto, validateSignup } from '../utils/validator.util'
 import { hashPwd } from '../utils/hashing.util'
 import { createNewUser } from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
+import { Handler } from '../middlewares/types'
 
-const register = async (req: Request, res: NextApiResponse) => {
+const register: Handler = async (req) => {
     const body: RegisterDto = await req.json()
     const validationResult = validateSignup(body)
     if (!validationResult.valid || !validationResult.data) {

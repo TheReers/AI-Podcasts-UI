@@ -3,10 +3,10 @@ import { verifyToken } from "../utils/token.util"
 import { isValidJwtHeader } from "../utils/validator.util"
 import userModel from "../db/models/user.model"
 import { connectToDB } from "../db/connect"
-import { BaseRequest, Handler } from "./types"
+import { BaseRequest, Handler, Params } from "./types"
 
 export const requiresLogin = (handler: Handler) => {
-    return async (req: BaseRequest, res: NextApiResponse) => {
+    return async (req: BaseRequest, { params }: { params: Params }, res: NextApiResponse) => {
         const dbConnection = await connectToDB()
         if (dbConnection.error) {
             return Response.json({ message: 'Something went wrong' }, { status: 500 })
@@ -33,7 +33,6 @@ export const requiresLogin = (handler: Handler) => {
         }
 
         req.user = userExists
-        return handler(req, res)
+        return handler(req, { params }, res)
     }
 }
-

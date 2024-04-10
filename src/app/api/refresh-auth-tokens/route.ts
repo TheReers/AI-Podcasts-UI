@@ -1,10 +1,10 @@
-import type { NextApiResponse } from 'next'
 import { isValidJwtHeader } from '../utils/validator.util'
 import { TokenType, createAuthTokens, verifyToken } from '../utils/token.util'
 import userModel from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
+import { Handler } from '../middlewares/types'
 
-const refreshAuthToken = async (req: Request, res: NextApiResponse) => {
+const refreshAuthToken: Handler = async (req) => {
     const body: { token: string } = await req.json()
     const isValid = isValidJwtHeader(`Bearer ${body.token}`)
     if (!isValid) {
