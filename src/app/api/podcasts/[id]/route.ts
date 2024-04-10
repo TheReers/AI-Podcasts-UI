@@ -31,7 +31,11 @@ const deleteUserPodcast: Handler = async (req, { params }) => {
         return Response.json({ message: 'Podcast not found' }, { status: 404 })
     }
 
-    await deleteFileFromCloudinary(podcast.uploader_public_id)
+    // only delete file from cloudinary if this podcast is the only one with the uploader_public_id
+    const podcastExist = await podcastModel.findOne({ uploader_public_id: podcast.uploader_public_id })
+    if (!podcastExist) {
+        await deleteFileFromCloudinary(podcast.uploader_public_id)
+    }
 
     return Response.json({
         data: podcast.toJSON(),
