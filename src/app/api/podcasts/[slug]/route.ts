@@ -9,7 +9,7 @@ const getUserPodcasts: Handler = async (req, { params }) => {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const podcast = await podcastModel.findOne({ user: user._id, _id: params.id })
+    const podcast = await podcastModel.findOne({ user: user._id, slug: params.slug })
     if (!podcast) {
         return Response.json({ message: 'Podcast not found' }, { status: 404 })
     }
@@ -26,7 +26,7 @@ const deleteUserPodcast: Handler = async (req, { params }) => {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const podcast = await podcastModel.findOneAndDelete({ user: user._id, _id: params.id })
+    const podcast = await podcastModel.findOneAndDelete({ user: user._id, slug: params.slug })
     if (!podcast) {
         return Response.json({ message: 'Podcast not found' }, { status: 404 })
     }

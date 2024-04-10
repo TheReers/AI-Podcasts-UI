@@ -16,6 +16,47 @@ const duplicatePodcast = async (podcast: IPodcast, user: string) => {
     return createPodcast
 }
 
+const cretePodcastData = async ({
+    message, slug, user_id
+}: {
+    message: string
+    slug: string
+    user_id: string
+}) => {
+    const ai = new AI()
+    const messageResponse = await ai.generatePodcastText(message)
+    if (messageResponse.error || !messageResponse.data) {
+        return Response.json(messageResponse, { status: 400 })
+    }
+
+    const audioResponse = await ai.convertToAudio(messageResponse.data)
+    if (audioResponse.error || !audioResponse.data) {
+        return Response.json(audioResponse, { status: 400 })
+    }
+
+    const uploadResult = await uploadFileToCloudinary({
+        data: audioResponse.data,
+        filename: `${slug}.mp3`,
+        folder: 'podcasts',
+    })
+
+    if (uploadResult.error || !uploadResult.data) {
+        return Response.json(uploadResult, { status: 400 })
+    }
+
+    const duration = getMP3Duration(audioResponse.data)
+    const createPodcast = await createNewPodcast({
+        name: message,
+        slug,
+        duration,
+        url: uploadResult.data.secure_url,
+        uploader_public_id: uploadResult.data.public_id,
+        user: user_id
+    })
+
+    return createPodcast
+}
+
 export const createPodcast: Handler = async (req) => {
   const { user } = req
   if (!user) {
@@ -24,7 +65,10 @@ export const createPodcast: Handler = async (req) => {
 
   const { message } = await req.json()
   if (!message) {
-    return Response.json({ error: 'message is required' }, { status: 400 })
+    return Response.json({
+        message: 'Invalid request payload provided',
+        errors: { message: 'Message is required' }
+    }, { status: 400 })
   }
 
   const slug = message.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
@@ -39,50 +83,23 @@ export const createPodcast: Handler = async (req) => {
 
         return Response.json({
             message: 'Podcast created successfully',
+            status: 'duplicated',
             data: duplicatePodcastResult.data.toJSON()
         }, { status: 201 })
     }
 
-    return Response.json({ message: 'Podcast already exist', data: podcastExist.toJSON() }, { status: 409 })
+    return Response.json({
+        message: 'Podcast already exist',
+        status: 'conflict',
+        data: podcastExist.toJSON()
+    })
   }
 
-  Response.json({ message: 'Creating podcast', data: { slug } }, { status: 201 })
-
-  const ai = new AI()
-  const messageResponse = await ai.generatePodcastText(message)
-  if (messageResponse.error || !messageResponse.data) {
-    return Response.json(messageResponse, { status: 400 })
-  }
-
-  const audioResponse = await ai.convertToAudio(messageResponse.data)
-  if (audioResponse.error || !audioResponse.data) {
-    return Response.json(audioResponse, { status: 400 })
-  }
-
-  const uploadResult = await uploadFileToCloudinary({
-    data: audioResponse.data,
-    filename: `${slug}.mp3`,
-    folder: 'podcasts',
+  // create the podcast without waiting for it to be created
+  cretePodcastData({ message, slug, user_id: user._id.toString() })
+  return Response.json({
+    message: 'Creating podcast',
+    data: { slug },
+    status: 'processing'
   })
-
-
-  if (uploadResult.error || !uploadResult.data) {
-    return Response.json(uploadResult, { status: 400 })
-  }
-
-  const duration = getMP3Duration(audioResponse.data)
-  const createPodcast = await createNewPodcast({
-    name: message,
-    slug,
-    duration,
-    url: uploadResult.data.secure_url,
-    uploader_public_id: uploadResult.data.public_id,
-    user: user._id.toString()
-  })
-
-    if (createPodcast.error || !createPodcast.data) {
-        return Response.json(createPodcast, { status: 400 })
-    }
-
-    return Response.json({ message: 'Podcast created successfully', data: createPodcast.data.toJSON() }, { status: 201 })
 }
