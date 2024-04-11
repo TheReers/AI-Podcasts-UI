@@ -12,7 +12,12 @@ const envs = {
         apiKey: process.env.NEXT_ELEVEN_LABS_API_KEY || ''
     },
     secretKey: process.env.NEXT_SECRET_KEY || '',
-    dbUri: process.env.NEXT_DB_URI || ''
+    dbUri: process.env.NEXT_DB_URI || '',
+    imageUpload: {
+        cloudName: process.env.NEXT_CLOUDINARY_NAME || '',
+        apiKey: process.env.NEXT_CLOUDINARY_API_KEY || '',
+        apiSecret: process.env.NEXT_CLOUDINARY_API_SECRET || ''
+    }
 }
 
 export default envs

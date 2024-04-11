@@ -1,5 +1,5 @@
 import { Schema, model, models } from 'mongoose'
-import { BaseModelClient, IBaseModel } from './base.model'
+import { BaseModelClient, IBaseModel, getModel } from './base.model'
 
 export interface IUser extends IBaseModel {
     name: string
@@ -20,7 +20,7 @@ export interface UserClient extends BaseModelClient {
     is_verified: boolean
 }
 
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
@@ -48,7 +48,7 @@ userSchema.methods.toJSON = function (): UserClient {
     }
 }
 
-const userModel = models.User<IUser> ||  model<IUser>('User', userSchema)
+const userModel = getModel('User', userSchema)
 
 export const createNewUser = async (data: Partial<IUser>) => {
     try {
@@ -65,4 +65,5 @@ export const createNewUser = async (data: Partial<IUser>) => {
         return { error: 'Something went wrong', status: 500 }
     }
 }
+
 export default userModel
