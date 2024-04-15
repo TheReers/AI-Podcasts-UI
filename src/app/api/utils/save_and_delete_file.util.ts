@@ -46,9 +46,14 @@ export const uploadFileToCloudinary = async ({
     }
 }
 
-export const deleteFileFromCloudinary = async (publicId: string) => {
+export const deleteAudioFromCloudinary = async (publicId: string) => {
     try {
-        const deleteResp = await cloudinary.uploader.destroy(publicId)
+        const deleteResp = await cloudinary.uploader.destroy(publicId, {
+            resource_type: 'video',
+            type: 'upload',
+            invalidate: true
+        })
+
         return {
             data: deleteResp
         }

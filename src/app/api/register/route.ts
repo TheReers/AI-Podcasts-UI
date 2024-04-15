@@ -32,7 +32,7 @@ const register: Handler = async (req) => {
     })
 
     if (createUser.error || !createUser.data) {
-        return Response.json({ message: createUser.error || 'Something went wrong' }, { status: createUser.status || 500 })
+        return Response.json({ message: createUser.error || 'Something went wrong' }, { status: 400 })
     }
 
     return Response.json({ message: 'Signup successful', data: createUser.data.toJSON() }, { status: 201 })

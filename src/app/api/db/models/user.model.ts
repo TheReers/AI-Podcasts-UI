@@ -59,10 +59,10 @@ export const createNewUser = async (data: Partial<IUser>) => {
         console.log('error creating user', error)
 
         if (error.code === 11000) {
-            return { error: 'Account already exist', status: 400 }
+            return { error: 'Account already exist' }
         }
 
-        return { error: 'Something went wrong', status: 500 }
+        return { error: 'Something went wrong' }
     }
 }
 

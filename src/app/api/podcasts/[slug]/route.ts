@@ -1,7 +1,7 @@
 import podcastModel from '../../db/models/podcast.model'
 import { requiresLogin } from '../../middlewares/requires_login.middleware'
 import { Handler } from '../../middlewares/types'
-import { deleteFileFromCloudinary } from '../../utils/save_and_delete_file.util'
+import { deleteAudioFromCloudinary } from '../../utils/save_and_delete_file.util'
 
 const getUserPodcasts: Handler = async (req, { params }) => {
     const { user } = req
@@ -34,7 +34,7 @@ const deleteUserPodcast: Handler = async (req, { params }) => {
     // only delete file from cloudinary if this podcast is the only one with the uploader_public_id
     const podcastExist = await podcastModel.findOne({ uploader_public_id: podcast.uploader_public_id })
     if (!podcastExist) {
-        await deleteFileFromCloudinary(podcast.uploader_public_id)
+        await deleteAudioFromCloudinary(podcast.uploader_public_id)
     }
 
     return Response.json({
