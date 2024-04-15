@@ -3,7 +3,8 @@ import { BaseModelClient, IBaseModel, getModel } from './base.model'
 
 export interface IPodcast extends IBaseModel {
     name: string
-    url: string
+    url?: string
+    text: string
     duration: number
     uploader_public_id: string
     slug: string
@@ -15,7 +16,8 @@ export interface PodcastClient extends BaseModelClient {
     /**
      * Public url of the podcast
      */
-    url: string
+    url?: string
+    text?: string
     slug: string
     uploader_public_id?: string
     /**
@@ -28,7 +30,8 @@ export interface PodcastClient extends BaseModelClient {
 const podcastSchema = new Schema<IPodcast>({
     name: { type: String, required: true },
     slug: { type: String, required: true },
-    url: { type: String, required: true },
+    url: { type: String },
+    text: { type: String, required: true },
     uploader_public_id: { type: String },
     duration: { type: Number, min: 0 },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -61,7 +64,7 @@ export const createNewPodcast = async (data: Partial<PodcastClient>) => {
         const error = err as unknown as Error & { code: number } 
         console.log('error saving podcast to db', error)
 
-        return { error: 'Something went wrong', status: 500 }
+        return { error: 'Something went wrong', statusCode: 500 }
     }
 }
 

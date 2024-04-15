@@ -42,7 +42,7 @@ export const uploadFileToCloudinary = async ({
         }
     } catch (error) {
         console.log('error saving file to cloudinary', error)
-        return { error: (error as Error).message }
+        return { error: (error as Error).message, message: 'Error saving file to cloudinary' }
     }
 }
 
