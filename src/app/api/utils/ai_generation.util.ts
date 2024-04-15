@@ -134,7 +134,7 @@ export default class AI {
         if (generatePodcastTextRequest.error || !generatePodcastTextRequest.data) {
             return {
                 error: generatePodcastTextRequest.error?.error?.message || 'Something went wrong',
-                message: 'Could not generate podcast.'
+                message: 'Could not generate podcast text.'
             }
         }
 

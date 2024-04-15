@@ -1,5 +1,6 @@
 import { requiresLogin } from '../middlewares/requires_login.middleware'
 import { Handler } from '../middlewares/types'
+import parseRequestBody from '../utils/get_request_body.util'
 
 const sendMessage: Handler = async (req) => {
     const { user } = req
@@ -7,7 +8,12 @@ const sendMessage: Handler = async (req) => {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const { message } = await req.json()
+    const body = await parseRequestBody(req)
+    if (!body) {
+        return Response.json({ error: 'Invalid request payload provided' }, { status: 400 })
+    }
+
+    const { message } = body
     if (!message) {
         return Response.json({ error: 'message is required' }, { status: 400 })
     }
