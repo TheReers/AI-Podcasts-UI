@@ -96,35 +96,25 @@ export const createPodcast: Handler = async (req) => {
                 message: 'Podcast created successfully',
                 status: 'duplicated',
                 data: duplicatePodcastResult.data.toJSON()
-            }, { status: 201, headers: {
-                'X-timestamp': `${Date.now() - start}ms`
-            } })
+            }, { status: 201 })
         }
 
         return Response.json({
             message: 'Podcast already exist',
             status: 'conflict',
             data: podcastExist.toJSON()
-        }, {
-            headers: {
-                'X-timestamp': `${Date.now() - start}ms`
-            }
         })
     }
 
-    console.log('creating podcast...')
+    console.log(`geerating podcast for **${message}**...`)
     // create the podcast without waiting for it to be created
     const data = await createPodcastData({ message, slug, user_id: user._id.toString() })
     if (data.error || !data.data) {
-        return Response.json(data, { status: 400, headers: {
-            'X-timestamp': `${Date.now() - start}ms`
-        } })
+        return Response.json(data, { status: 400 })
     }
 
     return Response.json({
         message: 'Podcast created successfully',
         data: data.data.toJSON()
-    }, { status: 201, headers: {
-        'X-timestamp': `${Date.now() - start}ms`
-    } })
+    }, { status: 201 })
 }
