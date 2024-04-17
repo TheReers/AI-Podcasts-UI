@@ -1,7 +1,0 @@
-{
-    "functions": {
-      "src/app/api/podcasts/route.ts": {
-        "maxDuration": 300
-      }
-    }
-}

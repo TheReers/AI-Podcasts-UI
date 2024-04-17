@@ -24,6 +24,7 @@ const createPodcastData = async ({
     slug: string
     user_id: string
 }): Promise<{ error?: undefined; data: IPodcast } | { error: string; message: string; data?: undefined }> => {
+    const start = Date.now()
     const ai = new AI()
     const messageResponse = await ai.generatePodcastText(message)
     if (messageResponse.error || !messageResponse.data) {
@@ -55,10 +56,14 @@ const createPodcastData = async ({
         user: user_id
     })
 
+    const end = Date.now()
+
+    console.log(`Time taken for full podcast generation for message -> ${message} = ${(end - start)}ms`)
     return createPodcast
 }
 
 export const createPodcast: Handler = async (req) => {
+    const start = Date.now()
     const { user } = req
     if (!user) {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
@@ -91,24 +96,35 @@ export const createPodcast: Handler = async (req) => {
                 message: 'Podcast created successfully',
                 status: 'duplicated',
                 data: duplicatePodcastResult.data.toJSON()
-            }, { status: 201 })
+            }, { status: 201, headers: {
+                'X-timestamp': `${Date.now() - start}ms`
+            } })
         }
 
         return Response.json({
             message: 'Podcast already exist',
             status: 'conflict',
             data: podcastExist.toJSON()
+        }, {
+            headers: {
+                'X-timestamp': `${Date.now() - start}ms`
+            }
         })
     }
 
+    console.log('creating podcast...')
     // create the podcast without waiting for it to be created
     const data = await createPodcastData({ message, slug, user_id: user._id.toString() })
     if (data.error || !data.data) {
-        return Response.json(data, { status: 400 })
+        return Response.json(data, { status: 400, headers: {
+            'X-timestamp': `${Date.now() - start}ms`
+        } })
     }
 
     return Response.json({
         message: 'Podcast created successfully',
         data: data.data.toJSON()
-    }, { status: 201 })
+    }, { status: 201, headers: {
+        'X-timestamp': `${Date.now() - start}ms`
+    } })
 }

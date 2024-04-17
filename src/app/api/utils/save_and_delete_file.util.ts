@@ -35,8 +35,11 @@ export const uploadFileToCloudinary = async ({
 }: {
     data: Buffer, filename: string, folder: string
 }) => {
+    const start = Date.now()
     try {
         const uplodResp = await upload(data, filename, folder)
+        console.log(`Time taken to upload file to cloudinary: ${(Date.now() - start)}ms`)
+
         return {
             data: uplodResp
         }

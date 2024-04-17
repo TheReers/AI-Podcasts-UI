@@ -4,3 +4,4 @@ import { getUserPodcasts } from './get_user_podcasts.route'
 
 export const POST = requiresLogin(createPodcast)
 export const GET = requiresLogin(getUserPodcasts)
+export const maxDuration = 240 // 4 minutes
