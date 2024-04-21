@@ -1,8 +1,9 @@
 import * as React from "react";
 import Image from "next/image";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import { Podcast } from "../page";
+import { Podcast } from "../../utils/api";
 import AudioPlayer from "./AudioPlayer";
+import { millisToMinutesAndSeconds } from "../../utils/millisecondsToMinsAndSec";
 
 interface Props {
   podcasts: Podcast[];
@@ -15,10 +16,12 @@ export default function PodCard({
   playPodcast,
   currentIndex,
 }: Props) {
-  function millisToMinutesAndSeconds(millis: number) {
-    let minutes = Math.floor(millis / 60000);
-    let seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ":" + (Number(seconds) < 10 ? "0" : "") + seconds;
+  const getAudioTracklist = (podcasts: Podcast[], index: number) => {
+    return podcasts.slice(index).map(p => ({
+      url: p.url,
+      title: p.name,
+      tags: [],
+    }))
   }
 
   return podcasts.map((podcast, index: number) => (
@@ -36,11 +39,7 @@ export default function PodCard({
             {podcast.name}
           </h1>
           <div className="flex items-center">
-            <PlayCircleIcon
-              onClick={() => {
-                playPodcast(index);
-              }}
-            />
+            <PlayCircleIcon onClick={() => playPodcast(index)} />
             <span className="text-[#CBC3E3] text-sm mt-1 ml-1">
               {millisToMinutesAndSeconds(podcast.duration)} min
             </span>
@@ -50,15 +49,7 @@ export default function PodCard({
       </div>
       <div className="absolute left-0 mt-4">
         {currentIndex === index && (
-          <AudioPlayer
-            tracklist={[
-              {
-                url: podcast.url,
-                title: podcast.name,
-                tags: [],
-              },
-            ]}
-          />
+          <AudioPlayer tracklist={getAudioTracklist(podcasts, index)} />
         )}
       </div>
     </div>
