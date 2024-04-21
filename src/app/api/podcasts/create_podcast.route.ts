@@ -11,6 +11,7 @@ const duplicatePodcast = async (podcast: IPodcast, user: string) => {
         slug: podcast.slug,
         duration: podcast.duration,
         url: podcast.url,
+        transcript: podcast.transcript,
         user
     })
 
@@ -50,6 +51,7 @@ const createPodcastData = async ({
     const createPodcast = await createNewPodcast({
         name: message,
         slug,
+        transcript: messageResponse.data,
         duration,
         url: uploadResult.data.secure_url,
         uploader_public_id: uploadResult.data.public_id,
@@ -63,7 +65,6 @@ const createPodcastData = async ({
 }
 
 export const createPodcast: Handler = async (req) => {
-    const start = Date.now()
     const { user } = req
     if (!user) {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
@@ -106,11 +107,11 @@ export const createPodcast: Handler = async (req) => {
         })
     }
 
-    console.log(`geerating podcast for **${message}**...`)
+    console.log(`generating podcast for **${message}**...`)
     // create the podcast without waiting for it to be created
     const data = await createPodcastData({ message, slug, user_id: user._id.toString() })
     if (data.error || !data.data) {
-        return Response.json({ message: data.error }, { status: 500 })
+        return Response.json({ message: data.message }, { status: 500 })
     }
 
     return Response.json({

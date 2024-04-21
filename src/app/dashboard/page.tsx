@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { signOutUser } from "../utils/signOut";
 import LogoutIcon from "@mui/icons-material/Logout";
+
 export default function Dashboard() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [searchParam, setSearchParam] = useState('')
@@ -65,12 +66,10 @@ export default function Dashboard() {
       </div>
 
       <div
-      onClick={()=>{
-        signOutUser()
-      }}
-      className="cursor-pointer flex items-center">
-        <LogoutIcon/>
-<span className="text-white ml-1">Logout</span>
+        onClick={()=> signOutUser()}
+        className="cursor-pointer flex items-center">
+          <LogoutIcon/>
+          <span className="text-white ml-1">Logout</span>
       </div>
     </main>
   );
