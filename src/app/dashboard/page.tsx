@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../globals.css";
 import { signOutUser } from "../utils/signOut";
 import PodSearch from "./components/PodSearch";
@@ -10,43 +10,35 @@ import { getAllPodcasts } from "./components/api";
 import { handleApiError } from "../service/axios";
 import CallMadeIcon from "@mui/icons-material/CallMade";
 import PodCard from "./components/PodCard";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+
+export interface Podcast {
+  _id: string;
+  name: string;
+  slug: string;
+  url: string;
+  user: string;
+  duration: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Track {
+  url: string;
+  title: string;
+  tags: string[];
+}
 
 export default function Dashboard() {
   const [audioSrc, setAudioSrc] = useState("");
   const [error, setError] = useState<string>("");
   const [showPlayer, setShowPlayer] = useState(false);
 
+  const [tracks, setTracks] = useState<Track[]>([]);
 
-  const [tracks, setTracks] = useState([
-    {
-      url: "https://audioplayer.madza.dev/Madza-Chords_of_Life.mp3",
-      title: "Madza - Chords of Life",
-
-    },
-    {
-      url: "https://audioplayer.madza.dev/Madza-Late_Night_Drive.mp3",
-      title: "Madza - Late Night Drive",
-      
-    },
-    {
-      url: "https://audioplayer.madza.dev/Madza-Persistence.mp3",
-      title: "Madza - Persistence",
-      
-    },
-  ]);
-
-  interface Podcast {
-    _id: string;
-    name: string;
-    slug: string;
-    url: string;
-    user: string;
-    duration: number;
-    createdAt: string;
-    updatedAt: string;
-  }
-
-    const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const getPodcasts = async () => {
     try {
@@ -61,36 +53,36 @@ export default function Dashboard() {
 
   const { isLoading } = useQuery("getPodcastList", getPodcasts, {});
 
-  const playPodcast = (podcast:{
-    url: string;
-    name: string;
-  }) => {
-    
-    setShowPlayer(true);
-setTracks({
-      url: podcast.url,
-      title: podcast.name
-})
-  }
+  const playPodcast = (index: number) => {
+    setCurrentIndex(index);
+  };
 
   return (
-    <main className="min-h-screen p-24">
+    <main className="min-h-screen p-16">
       <div className="flex justify-between">
         <PodSearch />
         <Button sx="{{color:'transparent', display:'flex'}}">
-          <span className="text-white text-sm">Generate Podcast</span>
-          <CallMadeIcon />
+          <span className="text-white  capitalize text-lg">Generate Podcast</span>
+          <CallMadeIcon sx={{ color: "#6936c9", ml:1 }} />
         </Button>
       </div>
-      <div className="">
+      <div className="mt-4">
         <h2 className="text-white text-3xl">AI Podcasts</h2>
       </div>
 
-      <div className="flex gap-x-5">
-        <PodCard podcasts={podcasts} />
+      <div className="flex gap-x-5 mt-4">
+        {!isLoading ? (
+          <PodCard
+            podcasts={podcasts}
+            playPodcast={playPodcast}
+            currentIndex={currentIndex}
+          />
+        ) : (
+          <Box sx={{ display: "flex", justify: "center" }}>
+            <CircularProgress />
+          </Box>
+        )}
       </div>
-
-      {showPlayer && <AudioPlayer tracklist={tracks} />}
     </main>
   );
 }
