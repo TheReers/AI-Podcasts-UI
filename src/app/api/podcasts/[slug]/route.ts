@@ -3,13 +3,13 @@ import { requiresLogin } from '../../middlewares/requires_login.middleware'
 import { Handler } from '../../middlewares/types'
 import { deleteAudioFromCloudinary } from '../../utils/save_and_delete_file.util'
 
-const getUserPodcasts: Handler = async (req, { params }) => {
+const getUserPodcast: Handler = async (req) => {
     const { user } = req
     if (!user) {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const podcast = await podcastModel.findOne({ user: user._id, slug: params.slug })
+    const podcast = await podcastModel.findOne({ user: user._id, slug: req.params.slug })
     if (!podcast) {
         return Response.json({ message: 'Podcast not found' }, { status: 404 })
     }
@@ -20,13 +20,13 @@ const getUserPodcasts: Handler = async (req, { params }) => {
     })
 }
 
-const deleteUserPodcast: Handler = async (req, { params }) => {
+const deleteUserPodcast: Handler = async (req) => {
     const { user } = req
     if (!user) {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const podcast = await podcastModel.findOneAndDelete({ user: user._id, slug: params.slug })
+    const podcast = await podcastModel.findOneAndDelete({ user: user._id, slug: req.params.slug })
     if (!podcast) {
         return Response.json({ message: 'Podcast not found' }, { status: 404 })
     }
@@ -43,5 +43,5 @@ const deleteUserPodcast: Handler = async (req, { params }) => {
     })
 }
 
-export const GET = requiresLogin(getUserPodcasts)
+export const GET = requiresLogin(getUserPodcast)
 export const DELETE = requiresLogin(deleteUserPodcast)

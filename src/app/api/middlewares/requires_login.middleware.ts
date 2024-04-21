@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next"
+import type { NextResponse } from "next/server"
 import { verifyToken } from "../utils/token.util"
 import { isValidJwtHeader } from "../utils/validator.util"
 import userModel from "../db/models/user.model"
@@ -6,7 +6,7 @@ import { connectToDB } from "../db/connect"
 import { BaseRequest, Handler, Params } from "./types"
 
 export const requiresLogin = (handler: Handler) => {
-    return async (req: BaseRequest, { params }: { params: Params }, res: NextApiResponse) => {
+    return async (req: BaseRequest, { params }: { params: Params, }, res: NextResponse) => {
         const startAt = Date.now()
 
         const dbConnection = await connectToDB()
@@ -35,7 +35,9 @@ export const requiresLogin = (handler: Handler) => {
         }
 
         req.user = userExists
-        const resp = await handler(req, { params }, res)
+        req.params = params
+
+        const resp = await handler(req, res)
         // add new header to response
         resp.headers.set('X-Response-Time', `${Date.now() - startAt}ms`)
         return resp
