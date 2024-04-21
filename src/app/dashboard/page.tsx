@@ -1,57 +1,61 @@
-"use client"
+"use client";
 import { useState } from "react";
 import "../globals.css";
-import { signOutUser } from "../utils/signOut";
+import PodSearch from "./components/PodSearch";
+import { Button } from "@mui/material";
+import { useQuery } from "react-query";
+import { getAllPodcasts, Podcast } from "../utils/api";
+import { handleApiError } from "../service/axios";
+import CallMadeIcon from "@mui/icons-material/CallMade";
+import PodCard from "./components/PodCard";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 export default function Dashboard() {
-  const [audioSrc, setAudioSrc] = useState("")
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-    setIsLoading(true);
-    const message = event.target.message.value;
-    const response = await fetch(`/api/podcasts`, { method: "POST", body: JSON.stringify({ message }) });
-    const status = response.status;
-    if (status !== 200) {
-      const error = await response.json();
-      setError(error.message);
-      setIsLoading(false);
-      return;
+  const getPodcasts = async () => {
+    try {
+      const { data } = await getAllPodcasts();
+      setPodcasts(data);
+    } catch (error) {
+      throw handleApiError(error);
     }
+  };
 
-    const audioBlob = await response.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
-    setAudioSrc(audioUrl);
-    setIsLoading(false);
-  }
+  const { isLoading } = useQuery("getPodcastList", getPodcasts, {});
+
+  const playPodcast = (index: number) => {
+    setCurrentIndex(index);
+  };
 
   return (
-    <main className="min-h-screen p-24">
-      Dashboard
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && !audioSrc && (<>
-        <div>Enter a message to generate a podcast</div>
-        <form onSubmit={handleSubmit} className="">
-          <label>
-            Message:
-            <input type="text" name="message" />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
-        <button onClick={() => signOutUser() }>Log out</button> 
-      </>)}
+    <main className="min-h-screen p-16">
+      <div className="flex justify-between">
+        <PodSearch />
+        <Button sx={{color:'transparent', display:'flex'}}>
+          <span className="text-white  capitalize text-lg">Generate Podcast</span>
+          <CallMadeIcon sx={{ color: "#6936c9", ml:1 }} />
+        </Button>
+      </div>
+      <div className="mt-4">
+        <h2 className="text-white text-3xl">AI Podcasts</h2>
+      </div>
 
-      {
-        !isLoading && audioSrc && (
-          <audio controls>
-            <source src={audioSrc} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-        )
-      }
-      {error && <div className="text-red-500">{error}</div>}
+      <div className="flex gap-x-5 mt-4">
+        {!isLoading ? (
+          <PodCard
+            podcasts={podcasts}
+            playPodcast={playPodcast}
+            currentIndex={currentIndex}
+          />
+        ) : (
+          <Box sx={{ display: "flex", justify: "center" }}>
+            <CircularProgress />
+          </Box>
+        )}
+      </div>
     </main>
   );
 }
