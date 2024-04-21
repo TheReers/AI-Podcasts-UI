@@ -22,9 +22,9 @@ interface CreatePodcast {
   message: string;
   status: string;
 }
-export const getAllPodcasts = async () => {
+export const getAllPodcasts = async (search?: string) => {
   try {
-    const res = await Api.get<GetAllPodcasts>(`/api/podcasts`);
+    const res = await Api.get<GetAllPodcasts>(`/api/podcasts?slug=${search}`);
 
     return res.data;
   } catch (error: any) {

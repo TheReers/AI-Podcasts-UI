@@ -11,31 +11,45 @@ import PodCard from "./components/PodCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
+import { signOutUser } from "../utils/signOut";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function Dashboard() {
   const router = useRouter();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [searchParam, setSearchParam] = useState("");
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  const getPodcasts = async () => {
+  const getPodcasts = async (search?: string) => {
     try {
-      const { data } = await getAllPodcasts();
+      const { data } = await getAllPodcasts(search);
       setPodcasts(data);
     } catch (error) {
       throw handleApiError(error);
     }
   };
 
-  const { isLoading } = useQuery("getPodcastList", getPodcasts, {});
+  const { isLoading } = useQuery(
+    ["getPodcastList", searchParam],
+    () => getPodcasts(searchParam),
+    {}
+  );
 
   const playPodcast = (index: number) => {
     setCurrentIndex(index);
   };
 
+  const onSearchChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (event) => {
+    event.preventDefault();
+    setSearchParam(event.target.value);
+  };
+
   return (
     <main className="min-h-screen p-16">
       <div className="flex justify-between">
-        <PodSearch />
+        <PodSearch onChange={onSearchChange} />
         <Button
           sx={{ color: "transparent", display: "flex" }}
           onClick={() => {
@@ -64,6 +78,16 @@ export default function Dashboard() {
             <CircularProgress />
           </Box>
         )}
+      </div>
+
+      <div
+        onClick={() => {
+          signOutUser();
+        }}
+        className="cursor-pointer flex items-center"
+      >
+        <LogoutIcon />
+        <span className="text-white ml-1">Logout</span>
       </div>
     </main>
   );

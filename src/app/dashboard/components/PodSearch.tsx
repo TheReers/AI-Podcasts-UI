@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import PodcastsIcon from "@mui/icons-material/Podcasts";
 
-export default function CustomizedInputBase() {
+export default function CustomizedInputBase({ onChange }: { onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> }) {
   return (
     <Paper
       component="form"
@@ -17,6 +17,7 @@ export default function CustomizedInputBase() {
         sx={{ ml: 1, flex: 1 }}
         placeholder="Search Podcasts"
         inputProps={{ "aria-label": "search google maps" }}
+        onChange={onChange}
       />
       <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
         <SearchIcon />
