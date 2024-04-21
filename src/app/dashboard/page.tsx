@@ -61,7 +61,7 @@ export default function Dashboard() {
     <main className="min-h-screen p-16">
       <div className="flex justify-between">
         <PodSearch />
-        <Button sx="{{color:'transparent', display:'flex'}}">
+        <Button sx={{color:'transparent', display:'flex'}}>
           <span className="text-white  capitalize text-lg">Generate Podcast</span>
           <CallMadeIcon sx={{ color: "#6936c9", ml:1 }} />
         </Button>
