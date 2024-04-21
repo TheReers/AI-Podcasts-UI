@@ -10,8 +10,10 @@ import CallMadeIcon from "@mui/icons-material/CallMade";
 import PodCard from "./components/PodCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
@@ -34,9 +36,16 @@ export default function Dashboard() {
     <main className="min-h-screen p-16">
       <div className="flex justify-between">
         <PodSearch />
-        <Button sx={{color:'transparent', display:'flex'}}>
-          <span className="text-white  capitalize text-lg">Generate Podcast</span>
-          <CallMadeIcon sx={{ color: "#6936c9", ml:1 }} />
+        <Button
+          sx={{ color: "transparent", display: "flex" }}
+          onClick={() => {
+            router.push("/dashboard/generate");
+          }}
+        >
+          <span className="text-white  capitalize text-lg">
+            Generate Podcast
+          </span>
+          <CallMadeIcon sx={{ color: "#6936c9", ml: 1 }} />
         </Button>
       </div>
       <div className="mt-4">
