@@ -104,9 +104,7 @@ const Signup: FC = (): ReactElement => {
     },
     onError(error) {
       toast.error((error as any).message);
-
       console.log(error as any);
-    
     },
   });
 

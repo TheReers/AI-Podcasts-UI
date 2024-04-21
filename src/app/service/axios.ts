@@ -1,9 +1,8 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { setupInterceptorsTo } from "./interceptors";
+import envs from "../../envs";
 
-const client: AxiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL,
-});
+const client: AxiosInstance = axios.create({ baseURL: envs.baseUrl });
 
 export const Api = setupInterceptorsTo(client);
 

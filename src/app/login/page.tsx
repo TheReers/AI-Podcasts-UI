@@ -158,8 +158,7 @@ function Login() {
                 btnText="Log in"
                 valid={!isValid}
                 loading={isLoading}
-                handleClick={() =>{
-      }}
+                handleClick={() =>{}}
               />
             </div>
           </form>
