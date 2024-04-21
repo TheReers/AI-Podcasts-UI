@@ -110,11 +110,12 @@ export const createPodcast: Handler = async (req) => {
     // create the podcast without waiting for it to be created
     const data = await createPodcastData({ message, slug, user_id: user._id.toString() })
     if (data.error || !data.data) {
-        return Response.json(data, { status: 400 })
+        return Response.json({ message: data.error }, { status: 500 })
     }
 
     return Response.json({
         message: 'Podcast created successfully',
-        data: data.data.toJSON()
+        data: data.data.toJSON(),
+        status: 'created'
     }, { status: 201 })
 }
