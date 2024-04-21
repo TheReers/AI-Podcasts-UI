@@ -1,4 +1,5 @@
-import { Api } from "../service/axios";
+import { FormValues } from "../dashboard/generate/page";
+import { Api, handleApiError } from "../service/axios";
 
 export interface Podcast {
   _id: string;
@@ -12,8 +13,14 @@ export interface Podcast {
 }
 
 interface GetAllPodcasts {
-  data: Podcast[]
-  message: string
+  data: Podcast[];
+  message: string;
+}
+
+interface CreatePodcast {
+  data: Podcast;
+  message: string;
+  status: string;
 }
 export const getAllPodcasts = async () => {
   try {
@@ -22,5 +29,17 @@ export const getAllPodcasts = async () => {
     return res.data;
   } catch (error: any) {
     throw new Error(error ?? "Something went wrong");
+  }
+};
+
+export const generatePodcast = async (body: FormValues) => {
+  try {
+    const payload = {
+      message: body.message,
+    };
+    const { data } = await Api.post<CreatePodcast>("/api/podcasts", payload);
+    return data;
+  } catch (error) {
+    throw handleApiError(error);
   }
 };
