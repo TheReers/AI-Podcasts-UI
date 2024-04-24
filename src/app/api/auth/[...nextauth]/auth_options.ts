@@ -2,14 +2,14 @@ import { Awaitable, User, NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
-import { HOUR_MS } from '../constants';
-import envs from '../envs';
-import { dateHasPassed } from '../app/api/utils/date.util';
+import envs from '../../../../envs';
+import { dateHasPassed } from '../../utils/date.util';
+import { HOUR_MS } from '../../../../constants';
 
 type Token = { token: string; expires: string }
 type Tokens = { access: Token, refresh: Token }
 
-const refreshAuthToken = async (token: string) => {
+const refreshAuthTokens = async (token: string) => {
   try {
     const response = await axios.post<{ data: { tokens: Tokens } }>(
       `${envs.baseUrl}/api/refresh-auth-tokens`,
@@ -34,14 +34,13 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'email', type: 'text' },
         password: { label: 'password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials: any) {
+        if (!credentials.type) throw new Error('Invalid credentials type')
+
         try {
           const response = await axios.post(
-            `${envs.baseUrl}/api/login`,
-            {
-              email: credentials!.email,
-              password: credentials!.password,
-            }
+            `${envs.baseUrl}/api/${credentials.type}`,
+            credentials
           );
 
           return {
@@ -85,7 +84,7 @@ export const authOptions: NextAuthOptions = {
 
       // access token has expired
       if (dateHasPassed(new Date(token.accessTokenExpires as string))) {
-        const updatedToken = await refreshAuthToken(token.refreshToken as string)
+        const updatedToken = await refreshAuthTokens(token.refreshToken as string)
         if (updatedToken.error || !updatedToken.data) {
           return {
             ...token,

@@ -56,37 +56,29 @@ function Login() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setIsLoading(true);
-
-    signIn("credentials", {
-      ...data,
-      redirect: false,
-    })
-      .then((callback) => {
-        setIsLoading(false);
-
-        if (callback?.ok) {
-          toast.success("Logged in successfully!");
-
-        } else {
-          if (callback?.error && JSON.parse(callback?.error)) {
-            const errorObj = JSON.parse(callback.error);
-           
-          }
-
-          toast.error(
-            callback?.error
-              ? JSON.parse(callback?.error)?.error
-              : "Authentication failed"
-          );
-        }
+    try {
+      setIsLoading(true);
+      const callback = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        type: "login",
+        redirect: false,
       })
-      .catch((error) => {
+      setIsLoading(false);
+      if (callback?.ok) {
+        toast.success("Logged in successfully!");
+      } else {
+        toast.error(
+          callback?.error
+            ? JSON.parse(callback?.error)?.message
+            : "Authentication failed"
+        );
+      }
+    } catch (error) {
         setIsLoading(false);
         console.log("error", error);
         toast.error("Authentication failed");
-      });
-          
+    };
   };
 
   const onErrors: SubmitErrorHandler<FormValues> = (errors) => {
