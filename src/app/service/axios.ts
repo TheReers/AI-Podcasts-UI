@@ -9,8 +9,8 @@ export const Api = setupInterceptorsTo(client);
 export const handleApiError = (error: any) => {
   if (error.response)
     return {
-      message: error.response.data.error,
-      status: error.response.data.status,
+      message: error.response.data.message,
+      status: error.response.status,
     };
 
   if (error.message) return error.message;

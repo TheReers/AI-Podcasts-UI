@@ -10,6 +10,7 @@ import CallMadeIcon from "@mui/icons-material/CallMade";
 import PodCard from "./components/PodCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { useRouter } from "next/navigation";
 import { signOutUser } from "../utils/signOut";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useSession } from "next-auth/react";
@@ -17,8 +18,9 @@ import { redirect } from "next/navigation";
 import { forceLogoutOnClientIfTokenHasExpired } from "../utils/handleExpiredToken";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
-  const [searchParam, setSearchParam] = useState('')
+  const [searchParam, setSearchParam] = useState("");
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const { status, data } = useSession()
 
@@ -34,24 +36,37 @@ export default function Dashboard() {
     }
   };
 
-  const { isLoading } = useQuery(["getPodcastList", searchParam], () => getPodcasts(searchParam), {});
+  const { isLoading } = useQuery(
+    ["getPodcastList", searchParam],
+    () => getPodcasts(searchParam),
+    {}
+  );
 
   const playPodcast = (index: number) => {
     setCurrentIndex(index);
   };
 
-  const onSearchChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
-    event.preventDefault()
-    setSearchParam(event.target.value)
-  }
+  const onSearchChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (event) => {
+    event.preventDefault();
+    setSearchParam(event.target.value);
+  };
 
   return (
     <main className="min-h-screen p-16">
       <div className="flex justify-between">
         <PodSearch onChange={onSearchChange} />
-        <Button sx={{color:'transparent', display:'flex'}}>
-          <span className="text-white  capitalize text-lg">Generate Podcast</span>
-          <CallMadeIcon sx={{ color: "#6936c9", ml:1 }} />
+        <Button
+          sx={{ color: "transparent", display: "flex" }}
+          onClick={() => {
+            router.push("/dashboard/generate");
+          }}
+        >
+          <span className="text-white  capitalize text-lg">
+            Generate Podcast
+          </span>
+          <CallMadeIcon sx={{ color: "#6936c9", ml: 1 }} />
         </Button>
       </div>
       <div className="mt-4">
@@ -74,7 +89,7 @@ export default function Dashboard() {
 
       { status === "authenticated" &&
           <div
-            onClick={()=> signOutUser()}
+            onClick={() => signOutUser()}
             className="cursor-pointer flex items-center">
               <LogoutIcon/>
               <span className="text-white ml-1">Logout</span>
