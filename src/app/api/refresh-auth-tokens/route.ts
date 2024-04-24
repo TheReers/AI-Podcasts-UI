@@ -11,7 +11,6 @@ const refreshAuthToken: Handler = async (req) => {
         return Response.json({ message: 'Invalid request payload provided' }, { status: 400 })
     }
 
-
     const isValid = isValidJwtHeader(`Bearer ${body.token}`)
     if (!isValid) {
         return Response.json(

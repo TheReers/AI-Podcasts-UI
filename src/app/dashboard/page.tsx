@@ -12,11 +12,18 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { signOutUser } from "../utils/signOut";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { forceLogoutOnClientIfTokenHasExpired } from "../utils/handleExpiredToken";
 
 export default function Dashboard() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [searchParam, setSearchParam] = useState('')
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const { status, data } = useSession()
+
+  if (status === 'unauthenticated') redirect('/')
+  forceLogoutOnClientIfTokenHasExpired(data)
 
   const getPodcasts = async (search?: string) => {
     try {
@@ -65,12 +72,14 @@ export default function Dashboard() {
         )}
       </div>
 
-      <div
-        onClick={()=> signOutUser()}
-        className="cursor-pointer flex items-center">
-          <LogoutIcon/>
-          <span className="text-white ml-1">Logout</span>
-      </div>
+      { status === "authenticated" &&
+          <div
+            onClick={()=> signOutUser()}
+            className="cursor-pointer flex items-center">
+              <LogoutIcon/>
+              <span className="text-white ml-1">Logout</span>
+          </div>
+      }
     </main>
   );
 }
