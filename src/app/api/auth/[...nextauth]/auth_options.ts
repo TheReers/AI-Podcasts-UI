@@ -35,7 +35,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'password', type: 'password' },
       },
       async authorize(credentials: any) {
-        if (!credentials.type) throw new Error('Invalid credentials type')
+        if (!credentials.type || !['login', 'register'].includes(credentials.type)) {
+            throw new Error('Invalid credentials type')
+        }
 
         try {
           const response = await axios.post(
