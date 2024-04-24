@@ -6,6 +6,7 @@ export interface Podcast {
   name: string;
   slug: string;
   url: string;
+  transcript: string,
   user: string;
   duration: number;
   createdAt: string;
@@ -22,6 +23,7 @@ interface CreatePodcast {
   message: string;
   status: string;
 }
+
 export const getAllPodcasts = async (search?: string) => {
   try {
     const res = await Api.get<GetAllPodcasts>(`/api/podcasts?slug=${search}`);

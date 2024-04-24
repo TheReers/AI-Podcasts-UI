@@ -5,7 +5,7 @@
  */
 const envs = {
     nextAuthSecret: process.env.NEXTAUTH_SECRET || '',
-    baseUrl: process.env.REACT_APP_BASE_URL || 'http://localhost:3000',
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 }
 
 export default envs

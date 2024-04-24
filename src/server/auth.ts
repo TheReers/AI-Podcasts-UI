@@ -14,7 +14,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'password', type: 'password' },
       },
       async authorize(credentials) {
-       
         try {
           const response = await axios.post(
             `${envs.baseUrl}/api/login`,
@@ -23,14 +22,12 @@ export const authOptions: NextAuthOptions = {
               password: credentials!.password,
             }
           );
-          console.log(response.data)
       
           return {
             token:response.data.data.tokens.access.token,
             data: response.data.data,
           } as unknown as Awaitable<User | null>;
         } catch (error) {
-       
           throw new Error(JSON.stringify((error as any).response.data));
         }
       },
@@ -54,7 +51,6 @@ export const authOptions: NextAuthOptions = {
       return Promise.resolve(url);
     },
     async signIn({ account, profile, user }) {
-      console.log('signIn', account, profile, user);
       return true; // Do different verification for other providers that don't have `email_verified`
     },
   },

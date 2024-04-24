@@ -3,7 +3,8 @@ import { BaseModelClient, IBaseModel, getModel } from './base.model'
 
 export interface IPodcast extends IBaseModel {
     name: string
-    url?: string
+    url: string
+    transcript: string
     duration: number
     uploader_public_id: string
     slug: string
@@ -15,7 +16,8 @@ export interface PodcastClient extends BaseModelClient {
     /**
      * Public url of the podcast
      */
-    url?: string
+    url: string
+    transcript: string
     slug: string
     uploader_public_id?: string
     /**
@@ -29,6 +31,7 @@ const podcastSchema = new Schema<IPodcast>({
     name: { type: String, required: true },
     slug: { type: String, required: true },
     url: { type: String },
+    transcript: { type: String },
     uploader_public_id: { type: String },
     duration: { type: Number, min: 0 },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -44,6 +47,7 @@ podcastSchema.methods.toJSON = function (): PodcastClient {
         name: podcast.name,
         slug: podcast.slug,
         url: podcast.url,
+        transcript: podcast.transcript,
         user: podcast.user.toString(),
         duration: podcast.duration,
         createdAt: podcast.createdAt,

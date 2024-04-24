@@ -1,9 +1,10 @@
-import { Api, handleApiError } from "../service/axios";
 import { signOut } from "next-auth/react";
+import { Api, handleApiError } from "../service/axios";
+import envs from "../../envs";
 
 export const signOutUser = async () => {
   try {
-    signOut({ callbackUrl: "http://localhost:3000/login" });
+    signOut({ callbackUrl: `${envs.baseUrl}/login` });
     await Api.post("/api/logout");
   } catch (error) {
     handleApiError(error);
