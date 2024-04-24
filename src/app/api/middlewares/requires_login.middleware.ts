@@ -4,21 +4,14 @@ import { isValidJwtHeader } from "../utils/validator.util"
 import userModel from "../db/models/user.model"
 import { connectToDB } from "../db/connect"
 import { BaseRequest, Handler, Params } from "./types"
+import { requiresDB } from "./requires_db.middlewre"
 
 export const requiresLogin = (handler: Handler) => {
-    return async (req: BaseRequest, { params }: { params: Params, }, res: NextResponse) => {
-        const startAt = Date.now()
-
-        const dbConnection = await connectToDB()
-        if (dbConnection.error) {
-            return Response.json({ message: 'Something went wrong' }, { status: 500 })
-        }
-
+    return requiresDB(async (req: BaseRequest, res: NextResponse) => {
         const authHeader = req.headers.get('Authorization')
         if (!isValidJwtHeader(authHeader)) {
             return Response.json({ message: 'Authorization header is required' }, { status: 401 })
         }
-
         const token = authHeader!.split(' ')[1]
         const tokeResp = verifyToken(token)
         if (tokeResp.error || !tokeResp.data) {
@@ -35,11 +28,7 @@ export const requiresLogin = (handler: Handler) => {
         }
 
         req.user = userExists
-        req.params = params
-
         const resp = await handler(req, res)
-        // add new header to response
-        resp.headers.set('X-Response-Time', `${Date.now() - startAt}ms`)
         return resp
-    }
+    })
 }

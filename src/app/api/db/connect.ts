@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 import envs from '../envs'
 
 let client: mongoose.Connection
-let now: number
 
 export const connectToDB = async () => {
     const url = envs.dbUri
@@ -11,9 +10,9 @@ export const connectToDB = async () => {
     }
 
     if (!client) {
+        console.log('setting db client')
         const connect = await mongoose.connect(url)
         client = connect.connection
-        now = Date.now()
     }
 
     return {
