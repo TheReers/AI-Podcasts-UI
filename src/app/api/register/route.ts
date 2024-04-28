@@ -4,6 +4,7 @@ import { createNewUser } from '../db/models/user.model'
 import { requiresDB } from '../middlewares/requires_db.middlewre'
 import { Handler } from '../middlewares/types'
 import parseRequestBody from '../utils/get_request_body.util'
+import { createAuthTokens } from '../utils/token.util'
 
 const register: Handler = async (req) => {
     const body: RegisterDto = await parseRequestBody(req)
@@ -35,7 +36,9 @@ const register: Handler = async (req) => {
         return Response.json({ message: createUser.error || 'Something went wrong' }, { status: 400 })
     }
 
-    return Response.json({ message: 'Signup successful', data: createUser.data.toJSON() }, { status: 201 })
+    const tokens = await createAuthTokens(createUser.data)
+
+    return Response.json({ message: 'Signup successful', data: { user: createUser.data.toJSON(), tokens } }, { status: 201 })
 }
 
 export const POST = requiresDB(register)

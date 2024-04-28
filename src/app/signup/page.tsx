@@ -2,18 +2,18 @@
 
 import React, { FC, ReactElement } from "react";
 import * as yup from "yup";
+import { signIn, useSession } from "next-auth/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import AuthButton from "../components/authButton";
 import { useRouter } from "next/navigation";
-import { useMutation } from "react-query";
-import { Api, handleApiError } from "../service/axios";
 import toast from "react-hot-toast";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { checkAuthStatus } from "../utils/checkAuthStatus";
 
 type FormValues = {
   name: string;
@@ -22,7 +22,6 @@ type FormValues = {
 };
 
 const schema = yup.object().shape({
-
   name: yup.string().required("Last name is required"),
   email: yup
     .string()
@@ -54,12 +53,12 @@ export type VerifyFormValues = {};
 
 const Signup: FC = (): ReactElement => {
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const {
     handleSubmit,
     register,
-    getValues,
     formState: { errors, isValid },
     watch,
   } = useForm<FormValues>({
@@ -77,40 +76,44 @@ const Signup: FC = (): ReactElement => {
   const fulfilledPasswordCharacterConstraint =
     passwordCharacterConstraint.isValidSync(password);
 
-  const onErrors = (errors: any) => {};
+  const onErrors: SubmitErrorHandler<FormValues> = (errors) => {
+    console.log("errors", errors);
+  };
 
   const toggleVisibility = () => {
     setVisible(!visible);
   };
 
-  async function registerUser(body: FormValues) {
+  const onSubmit: SubmitHandler<FormValues> = async (body) => {
     try {
-      const payload = {
+      setIsLoading(true)
+      const callback = await signIn("credentials", {
         name: body.name,
         email: body.email,
         password: body.password,
-        confirm_password: body.password
-      };
-      const { data } = await Api.post("/api/register", payload);
-      return data;
+        confirm_password: body.password,
+        type: "register",
+        redirect: false,
+      })
+      setIsLoading(false)
+      if (callback?.ok) {
+        toast.success("Sign up successfully!");
+      } else {
+        toast.error(
+          callback?.error
+            ? JSON.parse(callback?.error)?.message
+            : "Signup failed"
+        );
+      }
     } catch (error) {
-      throw handleApiError(error);
+      setIsLoading(false)
+      console.log("error", error);
+      toast.error("Signup failed");
     }
   }
 
-  const { isLoading, isError, error, mutate } = useMutation(registerUser, {
-    onSuccess() {
-    router.push("/login");
-    },
-    onError(error) {
-      toast.error((error as any).message);
-      console.log(error as any);
-    },
-  });
-
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    mutate(data);
-  };
+  const { status } = useSession();
+  checkAuthStatus(status);
 
   return (
     <div className="bg-bg-secondary min-h-screen flex flex-col">

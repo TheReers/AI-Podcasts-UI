@@ -1,7 +1,6 @@
 import axios, { AxiosError, ResponseType } from "axios"
 
 class Http {
-
     private async makeRequest<Req, Res>({
         url, method, headers, body, responseType
     }: {
@@ -29,7 +28,7 @@ class Http {
             } else {
                 error = err
             }
-    
+
             return { error }
         }
     }
