@@ -15,7 +15,7 @@ import Image from "next/image";
 
 import { forceLogoutOnClientIfTokenHasExpired } from "../../utils/handleExpiredToken";
 
-export default function Dashboard() {
+export default function Podcast() {
   const router = useRouter();
   const [podcast, setPodcast] = useState<Podcast>();
   const [searchParam, setSearchParam] = useState("");
@@ -98,4 +98,4 @@ export default function Dashboard() {
   );
 }
 
-(Dashboard as any).auth = true;
+(Podcast as any).auth = true;
