@@ -4,6 +4,7 @@ import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { Podcast } from "../../utils/api";
 import AudioPlayer from "./AudioPlayer";
 import { millisToMinutesAndSeconds } from "../../utils/millisecondsToMinsAndSec";
+import { useRouter } from "next/navigation";
 
 interface Props {
   podcasts: Podcast[];
@@ -23,9 +24,10 @@ export default function PodCard({
       tags: [],
     }))
   }
+  const router = useRouter();
 
   return podcasts.map((podcast, index: number) => (
-    <div key={index} className="relative">
+    <div onClick={()=>{router.push(`/dashboard/details?slug=${podcast.slug}`)}} key={index} className="relative cursor-pointer">
       <div className="">
         <Image
           src="/pod-image.jpg"
