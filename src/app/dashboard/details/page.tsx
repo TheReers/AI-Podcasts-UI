@@ -15,9 +15,9 @@ import Image from "next/image";
 
 import { forceLogoutOnClientIfTokenHasExpired } from "../../utils/handleExpiredToken";
 
-export default function Podcast() {
+export default function PodcastDetailsComponent() {
   const router = useRouter();
-  const [podcast, setPodcast] = useState<Podcast>();
+  const [podcastDetails, setPodcast] = useState<Podcast>();
   const [searchParam, setSearchParam] = useState("");
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const { status, data } = useSession();
@@ -61,7 +61,7 @@ export default function Podcast() {
         {!isLoading ? (
           <div className="">
             <div className="mt-4">
-              <h2 className="text-white text-3xl capitalize">{podcast?.name}</h2>
+              <h2 className="text-white text-3xl capitalize">{podcastDetails?.name}</h2>
               <Image
                 src="/pod-image-large.jpg"
                 alt="podcast image"
@@ -75,8 +75,8 @@ export default function Podcast() {
                 <AudioPlayer
                   tracklist={[
                     {
-                      url: podcast?.url || "",
-                      title: podcast?.name || "",
+                      url: podcastDetails?.url || "",
+                      title: podcastDetails?.name || "",
                       tags: [],
                     },
                   ]}
@@ -85,7 +85,7 @@ export default function Podcast() {
               <h5 className="text-white text-2xl capitalize mt-4">
                 Transcript
               </h5>
-              <p className="text-white text-base mt-4">{podcast?.transcript}</p>
+              <p className="text-white text-base mt-4">{podcastDetails?.transcript}</p>
             </div>
           </div>
         ) : (
@@ -98,4 +98,4 @@ export default function Podcast() {
   );
 }
 
-(Podcast as any).auth = true;
+(PodcastDetailsComponent as any).auth = true;
