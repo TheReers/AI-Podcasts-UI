@@ -90,7 +90,7 @@ export default function Dashboard() {
       { status === "authenticated" &&
           <div
             onClick={() => signOutUser()}
-            className="cursor-pointer flex items-center">
+            className="cursor-pointer flex items-center absolute bottom-10">
               <LogoutIcon/>
               <span className="text-white ml-1">Logout</span>
           </div>
