@@ -6,7 +6,7 @@ import { getDetails, Podcast } from "../../utils/api";
 import { handleApiError } from "../../service/axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import AudioPlayer from "../components/AudioPlayer";
 import Image from "next/image";
 import AuthWrapper from "../components/AuthWrapper";
@@ -20,6 +20,9 @@ export default function PodcastDetailsComponent() {
 
   const getPodcastDetails = async (slug?: string | null) => {
     try {
+      if (!slug) {
+        return;
+      }
       const { data } = await getDetails(slug);
       setPodcast(data);
     } catch (error) {
@@ -33,15 +36,9 @@ export default function PodcastDetailsComponent() {
     {}
   );
 
-  if (!slug) {
-    router.push("/dashboard");
-  }
-
-  if (isLoading && !podcastDetails) {
-    setTimeout(() => {
-      toast.error("Podcast not found");
-    }, 1000);
-    router.push("/dashboard");
+  if (!slug || (!isLoading && !podcastDetails)) {
+    toast.error("Podcast not found");
+    redirect("/dashboard");
   }
 
   return (

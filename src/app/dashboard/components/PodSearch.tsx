@@ -6,7 +6,9 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import PodcastsIcon from "@mui/icons-material/Podcasts";
 
-export default function CustomizedInputBase({ onChange }: { onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> }) {
+export default function CustomizedInputBase(
+  { onChange }: { onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> }
+) {
   return (
     <Paper
       component="form"
