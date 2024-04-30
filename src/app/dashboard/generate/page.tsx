@@ -4,7 +4,6 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
 import DirectionsIcon from "@mui/icons-material/Directions";
 import {
   Controller,
@@ -19,7 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { generatePodcast } from "@/app/utils/api";
 import PodCard from "../components/PodCard";
 import { Box, CircularProgress } from "@mui/material";
-import { signOut } from "next-auth/react";
+import AuthWrapper from "../components/AuthWrapper";
 
 export type FormValues = {
   message: string;
@@ -68,71 +67,63 @@ const GeneratePodcast = () => {
   };
 
   return (
-    <div className="min-h-screen p-16">
-      <h2 className="text-white text-2xl">Create a podcast</h2>
-      <div className="mt-4">
-        <Paper
-          component="form"
-          sx={{
-            p: "2px 4px",
-            display: "flex",
-            alignItems: "center",
-            width: 400,
-          }}
-          onSubmit={handleSubmit(onSubmit, onErrors)}
-        >
-          <Controller
-            name="message"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <InputBase
-                {...field}
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="podcast idea e.g 'How to make a podcast'"
-                inputProps={{ "aria-label": "search google maps" }}
-                error={!isValid}
-              />
-            )}
-          />
-          <IconButton
-            type="button"
-            sx={{ p: "10px" }}
-            aria-label="search"
-            onClick={() => {
-              signOut({ callbackUrl: "http://localhost:3000/login" });
-            }}
-          >
-            <SearchIcon />
-          </IconButton>
-          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-          <IconButton
-            color="primary"
-            sx={{ p: "10px" }}
-            aria-label="directions"
-            type="submit"
-          >
-            <DirectionsIcon />
-          </IconButton>
-        </Paper>
-        <span className="text-red-500 text-xs">{errors.message?.message}</span>
-      </div>
-      {isLoading ? (
-        <Box sx={{ display: "flex", justify: "center" }}>
-          <CircularProgress />
-        </Box>
-      ) : data?.data ? (
+    <AuthWrapper>
+      <div className="min-h-screen p-16">
+        <h2 className="text-white text-2xl">Create a podcast</h2>
         <div className="mt-4">
-          <PodCard
-            podcasts={[data.data]}
-            playPodcast={playPodcast}
-            currentIndex={currentIndex}
-          />
+          <Paper
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              width: 400,
+            }}
+            onSubmit={handleSubmit(onSubmit, onErrors)}
+          >
+            <Controller
+              name="message"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <InputBase
+                  {...field}
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder="podcast idea e.g 'How to make a podcast'"
+                  inputProps={{ "aria-label": "search google maps" }}
+                  error={!isValid}
+                />
+              )}
+            />
+            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            <IconButton
+              color="primary"
+              sx={{ p: "10px" }}
+              aria-label="directions"
+              type="submit"
+            >
+              <DirectionsIcon />
+            </IconButton>
+          </Paper>
+          <span className="text-red-500 text-xs">{errors.message?.message}</span>
         </div>
-      ) : (
-        <></>
-      )}
-    </div>
+        {isLoading ? (
+          <Box sx={{ display: "flex", justify: "center" }}>
+            <CircularProgress />
+          </Box>
+        ) : data?.data ? (
+          <div className="mt-4">
+            <PodCard
+              podcasts={[data.data]}
+              playPodcast={playPodcast}
+              currentIndex={currentIndex}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+    </AuthWrapper>
   );
 };
 

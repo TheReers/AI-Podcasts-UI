@@ -12,10 +12,12 @@ import {
   ): Promise<AxiosRequestConfig> => {
     const session = await getSession();
     const token = (session as any)?.token;
-    config.headers = {
-      ...(config?.headers ?? {}),
-      Authorization: `Bearer ${token}`,
-    };
+    if (!(session as any).error && token) {
+      config.headers = {
+        ...(config?.headers ?? {}),
+        Authorization: `Bearer ${token}`,
+      };
+    }
     return config;
   };
   
@@ -31,12 +33,12 @@ import {
     return Promise.reject(error);
   };
   
-  export function setupInterceptorsTo(
+export function setupInterceptorsTo(
     axiosInstance: AxiosInstance
-  ): AxiosInstance {
+): AxiosInstance {
     // @ts-ignore
     axiosInstance.interceptors.request.use(onRequest, onRequestError);
     axiosInstance.interceptors.response.use(onResponse, onResponseError);
     return axiosInstance;
-  }
+}
   

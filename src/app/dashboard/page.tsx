@@ -13,19 +13,13 @@ import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import { signOutUser } from "../utils/signOut";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { forceLogoutOnClientIfTokenHasExpired } from "../utils/handleExpiredToken";
+import AuthWrapper from "./components/AuthWrapper";
 
 export default function Dashboard() {
   const router = useRouter();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [searchParam, setSearchParam] = useState("");
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const { status, data } = useSession()
-
-  if (status === 'unauthenticated') redirect('/')
-  forceLogoutOnClientIfTokenHasExpired(data)
 
   const getPodcasts = async (search?: string) => {
     try {
@@ -54,48 +48,48 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen p-16">
-      <div className="flex justify-between">
-        <PodSearch onChange={onSearchChange} />
-        <Button
-          sx={{ color: "transparent", display: "flex" }}
-          onClick={() => {
-            router.push("/dashboard/generate");
-          }}
-        >
-          <span className="text-white  capitalize text-lg">
-            Generate Podcast
-          </span>
-          <CallMadeIcon sx={{ color: "#6936c9", ml: 1 }} />
-        </Button>
-      </div>
-      <div className="mt-4">
-        <h2 className="text-white text-3xl">AI Podcasts</h2>
-      </div>
+    <AuthWrapper>
+      <main className="min-h-screen p-16">
+        <div className="flex justify-between">
+          <PodSearch onChange={onSearchChange} />
+          <Button
+            sx={{ color: "transparent", display: "flex" }}
+            onClick={() => {
+              router.push("/dashboard/generate");
+            }}
+          >
+            <span className="text-white  capitalize text-lg">
+              Generate Podcast
+            </span>
+            <CallMadeIcon sx={{ color: "#6936c9", ml: 1 }} />
+          </Button>
+        </div>
+        <div className="mt-4">
+          <h2 className="text-white text-3xl">AI Podcasts</h2>
+        </div>
 
-      <div className="flex gap-x-5 mt-4">
-        {!isLoading ? (
-          <PodCard
-            podcasts={podcasts}
-            playPodcast={playPodcast}
-            currentIndex={currentIndex}
-          />
-        ) : (
-          <Box sx={{ display: "flex", justify: "center" }}>
-            <CircularProgress />
-          </Box>
-        )}
-      </div>
+        <div className="flex gap-x-5 mt-4">
+          {!isLoading ? (
+            <PodCard
+              podcasts={podcasts}
+              playPodcast={playPodcast}
+              currentIndex={currentIndex}
+            />
+          ) : (
+            <Box sx={{ display: "flex", justify: "center" }}>
+              <CircularProgress />
+            </Box>
+          )}
+        </div>
 
-      { status === "authenticated" &&
-          <div
-            onClick={() => signOutUser()}
-            className="cursor-pointer flex items-center absolute bottom-10">
-              <LogoutIcon/>
-              <span className="text-white ml-1">Logout</span>
-          </div>
-      }
+        <div
+          onClick={() => signOutUser()}
+          className="cursor-pointer flex items-center absolute bottom-10">
+          <LogoutIcon/>
+          <span className="text-white ml-1">Logout</span>
+        </div>
     </main>
+  </AuthWrapper>
   );
 }
 
