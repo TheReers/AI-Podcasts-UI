@@ -13,11 +13,15 @@ export interface Podcast {
   updatedAt: string;
 }
 
+
 interface GetAllPodcasts {
   data: Podcast[];
   message: string;
 }
-
+interface GetDetails {
+  data: Podcast;
+  message: string;
+}
 interface CreatePodcast {
   data: Podcast;
   message: string;
@@ -27,6 +31,15 @@ interface CreatePodcast {
 export const getAllPodcasts = async (search?: string) => {
   try {
     const res = await Api.get<GetAllPodcasts>(`/api/podcasts?slug=${search}`);
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error ?? "Something went wrong");
+  }
+};
+export const getDetails = async (slug?: string|null) => {
+  try {
+    const res = await Api.get<GetDetails>(`/api/podcasts/${slug}`);
 
     return res.data;
   } catch (error: any) {
