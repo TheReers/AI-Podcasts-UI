@@ -29,6 +29,8 @@ export const handleApiError = (error: any) => {
       return data.message || "Resource not found";
     case 409:
       return "A duplicate already eists";
+    case 401:
+      return "Unauthorized";
     default:
       return "Something went wrong";
   }
