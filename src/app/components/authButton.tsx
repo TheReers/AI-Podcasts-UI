@@ -19,7 +19,7 @@ export default function AuthButton({
   return (
     <Stack spacing={1} direction="row">
       <Button
-        style={{ width: "100%", background: "linear-gradient(289.33deg, #D391E1 5.5%, #FFD9BB 89.93%)", height: 60, borderRadius: 40}}
+        style={{ width: "100%", background: "#6936c9", height: 48 }}
         variant="contained"
         type="submit"
         onClick={handleClick}
@@ -35,7 +35,7 @@ export default function AuthButton({
         {loading ? (
           <CircularProgress size={24} sx={{ color: "#fff" }} />
         ) : (
-          <span className="capitalize text-white" style={{  fontWeight: 800 }}>
+          <span className="capitalize" style={{  fontWeight: 800 }}>
             {btnText}
           </span>
         )}

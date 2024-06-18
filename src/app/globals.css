@@ -40,7 +40,7 @@ input {
   padding: 10px 12px;
   margin-bottom: 5px;
   font-size: 14px;
-  border: 1px solid #E0DEDE;
+  border: 1px solid #B7BBBC;
   outline: none;
   color: #000;
 }
@@ -52,11 +52,4 @@ label {
   line-height: 24px;
   font-weight: 500;
   color: #040404;
-}
-
-.colortext{
-background:linear-gradient(289.33deg, #D85BF2 5.5%, #FE8F38 89.93%);
-
- -webkit-text-fill-color: transparent; 
- -webkit-background-clip: text;
 }

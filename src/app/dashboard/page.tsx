@@ -14,8 +14,6 @@ import { useRouter } from "next/navigation";
 import { signOutUser } from "../utils/signOut";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AuthWrapper from "./components/AuthWrapper";
-import CreateButton from "./components/CreateButton";
-import Image from "next/image";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -51,37 +49,26 @@ export default function Dashboard() {
 
   return (
     <AuthWrapper>
-      <main className="min-h-screen px-8 py-16">
+      <main className="min-h-screen p-16">
         <div className="flex justify-between">
           <PodSearch onChange={onSearchChange} />
-
-          <CreateButton />
-        
+          <Button
+            sx={{ color: "transparent", display: "flex" }}
+            onClick={() => {
+              router.push("/dashboard/generate");
+            }}
+          >
+            <span className="text-white  capitalize text-lg">
+              Generate Podcast
+            </span>
+            <CallMadeIcon sx={{ color: "#6936c9", ml: 1 }} />
+          </Button>
         </div>
-        <div className="mt-10 mb-4 flex justify-between">
-          <h2 className="text-black text-3xl">Explore</h2>
-          <div className="flex gap-x-2">
-          <Image
-            src="/dashboard/caretcircle.svg"
-            alt="caret circle icon"
-            width={24}
-            height={24}
-            priority
-          />
-
-<Image
-            src="/dashboard/caretcircle-fade.svg"
-            alt="caret circle icon faded"
-            width={24}
-            height={24}
-            priority
-            className="rotate-180"
-          />
-          
-          </div>
+        <div className="mt-4">
+          <h2 className="text-white text-3xl">AI Podcasts</h2>
         </div>
 
-        <div className="flex flex-nowrap md:flex-wrap gap-x-5 mt-4 gap-y-6 overflow-x-scroll md:overflow-x-hidden">
+        <div className="flex gap-x-5 mt-4">
           {!isLoading ? (
             <PodCard
               podcasts={podcasts}
