@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import UnAuthenticatedWrapper from "../components/UnAuthWrapper";
-import Image from "next/image";
 
 export type FormValues = {
   email: string;
@@ -93,31 +92,20 @@ function Login() {
 
   return (
     <UnAuthenticatedWrapper>
-      <div className="flex  justify-center  items-center min-h-screen bg-gradient-conic-t bg-cover ">
-        <div className="my-8 h-full  ">
-          <div className="flex w-full md:w-[1000px]  my-auto justify-center items-center">      
+      <div className="flex  justify-center px-0 items-center min-h-screen">
+        <div className="my-8 h-full max-h-[800px]">
+          <div className="flex w-[400px] md:w-[1000px] shadow-md my-auto justify-center">      
             {/* form slots */}
 
-            <div className="bg-white w-[300px]   md:w-1/2 py-12 px-5 md:px-16 rounded-[24px]">
-            <p className="font-medium text-2xl md:text-[36px] text-center text-black">Welcome back</p>
-
-            <div className="h-14 rounded-[35px] w-full flex justify-center items-center border border-[#E0DEDE] mt-8">
-            <Image
-          src="/google-icon.svg"
-          alt="podcast image"
-          width={23}
-          height={23}
-          priority
-        />
-<span className="ml-1 text-[#878787] font-medium text-base">Log in with Google</span>
-            </div>
+            <div className="bg-white w-[400px]  md:w-1/2 p-4 rounded-[7.5px]">
+            <p className="font-bold text-2xl text-center text-black">Welcome back</p>
             <form
-              className="grid grid-cols-2 mt-8"
+              className="grid grid-cols-2"
               onSubmit={handleSubmit(onSubmit, onErrors)}
             >
-              <label htmlFor="">Email*</label>
+              <label htmlFor="">Email address</label>
               <input
-                className=" col-span-2 rounded-[35px]"
+                className=" col-span-2"
                 {...register("email")}
                 placeholder="Email Address"
               />
@@ -128,10 +116,10 @@ function Login() {
               </div>
 
               <div className="relative col-span-2 pt-4">
-                <label htmlFor="password">Password*</label>
+                <label htmlFor="password">Password</label>
                 <input
                   type={visible ? "text" : "password"}
-                  className="col-span-2 w-full text-black mt-2 rounded-[35px]"
+                  className="col-span-2 w-full text-black mt-2"
                   {...register("password")}
                   placeholder="Create password"
                 />

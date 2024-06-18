@@ -14,7 +14,6 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import UnAuthenticatedWrapper from "../components/UnAuthWrapper";
-import Image from "next/image";
 
 type FormValues = {
   name: string;
@@ -115,31 +114,19 @@ const Signup: FC = (): ReactElement => {
 
   return (
     <UnAuthenticatedWrapper>
-      <div className="bg-gradient-conic-t bg-cover min-h-screen flex flex-col justify-center  px-12 md:px-0">
-        <div className="w-full flex justify-center grow items-center">
-      
+      <div className="bg-bg-secondary min-h-screen flex flex-col">
+        <div className="w-full flex justify-center grow">
           <form
-            className="shadow-md w-full md:w-[581px] h-fit bg-white  mt-16 px-5  md:px-16 py-12 font-mont mb-5 rounded-[24px]"
+            className="shadow-md w-[448px] h-fit bg-white  mt-16  p-6 font-mont mb-5 rounded-[7.5px]"
             onSubmit={handleSubmit(onSubmit, onErrors)}
           >
-            <p className=" text-2xl md:text-[36px] mb-6 text-black text-center mx-auto font-medium">Create account</p>
-
-            <div className="h-14 rounded-[35px] w-full flex justify-center items-center border border-[#E0DEDE] mt-8">
-            <Image
-          src="/google-icon.svg"
-          alt="podcast image"
-          width={23}
-          height={23}
-          priority
-        />
-<span className="ml-2 text-[#878787] font-medium text-base"> Sign up with Google</span>
-            </div>
+            <p className="font-bold text-2xl mb-6 text-black">Create new account</p>
     
-            <div className="grid grid-cols-2  ">
+            <div className="grid grid-cols-2 border-b-[3px] border-b-[#040404] ">
             
-                  <label className="text-alt-black" htmlFor="">Full Name *</label>
+                  <label htmlFor="">Full Name</label>
                   <input
-                    className=" h-[44px] col-span-2 rounded-[35px]"
+                    className=" mt-2 col-span-2"
                     {...register("name")}
                     placeholder="Full name"
                   />
@@ -150,9 +137,9 @@ const Signup: FC = (): ReactElement => {
                   </div>
               
                   <div className="relative col-span-2 pt-4">
-              <label className="text-alt-black" htmlFor="">Email address *</label>
+              <label htmlFor="">Email address</label>
               <input
-                className=" col-span-2 h-[44px] w-full rounded-[35px] mt-[6px]"
+                className=" col-span-2 w-full"
                 {...register("email")}
                 placeholder="Email Address"
               />
@@ -163,10 +150,10 @@ const Signup: FC = (): ReactElement => {
               </div>
               </div>
               <div className="relative col-span-2 pt-4">
-                <label className="text-alt-black" htmlFor="password">Password *</label>
+                <label htmlFor="password">Password</label>
                 <input
                   type={visible ? "text" : "password"}
-                  className="col-span-2 h-[44px] w-full  rounded-[35px] mt-[6px]"
+                  className="col-span-2 w-full mt-2"
                   {...register("password")}
                   placeholder="Create password"
                 />
@@ -183,7 +170,7 @@ const Signup: FC = (): ReactElement => {
               <>
                 <div className="flex mt-4">
                 <ErrorIcon  sx={{color:"#000",height:15}} />
-                  <span className="ml-2 text-xs text-alt-black">Your password</span>
+                  <span className="ml-2 text-xs text-black">Your password</span>
                 </div>
                 <div className="flex mt-2">
                   <CheckCircleIcon sx={{color:"#000",height:15}} />
@@ -226,7 +213,7 @@ const Signup: FC = (): ReactElement => {
             <div className="mt-6">
               <AuthButton
                 data-testid="button"
-                btnText="Sign Up"
+                btnText="Get started"
                 valid={!isValid}
                 loading={isLoading}
               />
