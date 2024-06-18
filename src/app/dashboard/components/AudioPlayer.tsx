@@ -12,7 +12,7 @@ interface Props {
 
 export default function AudioPlayer({ tracklist }: Props) {
   return (
-    <div className="">
+    <div className="absolute">
       <Player
         trackList={tracklist}
         includeTags={false}

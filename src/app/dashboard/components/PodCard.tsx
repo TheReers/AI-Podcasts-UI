@@ -27,26 +27,27 @@ export default function PodCard({
   const router = useRouter();
 
   return podcasts.map((podcast, index: number) => (
-    <div onClick={()=>{router.push(`/dashboard/details?slug=${podcast.slug}`)}} key={index} className="relative cursor-pointer">
+    <div  onClick={()=>{router.push(`/dashboard/details?slug=${podcast.slug}`)}} key={index} className="relative cursor-pointer shadow-md w-[273px] min-w-[273px] px-3 py-2 rounded-[7px] min-h-[290px]">
       <div className="">
         <Image
-          src="/pod-image.jpg"
+          src="/pod-image.png"
           alt="podcast image"
-          width={150}
-          height={100}
+          width={249}
+          height={182}
           priority
         />
         <div className="">
-          <h1 className="mt-2 capitalize w-[150px] text-ellipsis overflow-hidden text-nowrap">
+          <h1 className="mt-2 capitalize w-[150px] text-ellipsis overflow-hidden text-nowrap text-black font-medium">
             {podcast.name}
           </h1>
-          <div className="flex items-center">
+          <div className="flex items-center mt-9">
             <PlayCircleIcon onClick={() => playPodcast(index)} />
-            <span className="text-[#CBC3E3] text-sm mt-1 ml-1">
+            <span className="text-[#878787] text-sm">Reers Podcast</span>
+            <span className="text-[#878787] text-sm  ml-4">
               {millisToMinutesAndSeconds(podcast.duration)} min
             </span>
           </div>
-          <p className="mt-1">Reers Podcasts</p>
+          
         </div>
       </div>
       <div className="absolute left-0 mt-4">

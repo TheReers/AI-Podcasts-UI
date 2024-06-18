@@ -12,22 +12,23 @@ export default function CustomizedInputBase(
   return (
     <Paper
       component="form"
-      sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400 }}
+      sx={{ p: "2px 4px", display: "flex", alignItems: "center", borderRadius: 40, boxShadow:0, border: "1px solid rgba(224, 162, 219, 0.13)"}}
+    className="w-[196px] md:w-[400px]"
     >
+      
+
+<IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+        <SearchIcon />
+      </IconButton>
   
       <InputBase
         sx={{ ml: 1, flex: 1 }}
-        placeholder="Search Podcasts"
+        placeholder="Search"
         inputProps={{ "aria-label": "search google maps" }}
         onChange={onChange}
       />
-      <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-        <SearchIcon />
-      </IconButton>
-      <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-      <IconButton color="primary" sx={{ p: "10px" }} aria-label="directions">
-        <PodcastsIcon sx={{ color: "#6936c9" }} />
-      </IconButton>
+     
+      
     </Paper>
   );
 }
